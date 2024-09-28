@@ -6,12 +6,17 @@ import './App.css'
 function App() {
     return (
         <Router>
-            <Header/>
-            <Routes>
-                <Route path="/" element={<Home/>} />
-            </Routes>
+            <div className="App">
+                <Header />
+                <div className="content">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                    </Routes>
+                </div>
+            </div>
         </Router>
     );
 }
+
 
 export default App

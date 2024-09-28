@@ -7,7 +7,7 @@ import '../LandingPage.css';
 const LandingPage = () => {
     const navigate = useNavigate();
     return (
-        <div className="landing-container" style={{padding: "50px"}}>
+        <div className="landing-container" style={{padding: "25px"}}>
             <header className="text-center landing-title">
             <h1 className="landing-title">High School & College Ranking App</h1>
             <h1 className="landing-title"> Project Horizon</h1>

@@ -1,8 +1,3 @@
-#root {
-  max-width: 200vh;
-  text-align: center;
-}
-
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -12,18 +7,14 @@
   }
 }
 
+.header {
+  padding-left: 20px
+}
+
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
-}
-
-.App {
-  display: block;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  width: 100%;
 }
 
 .card {

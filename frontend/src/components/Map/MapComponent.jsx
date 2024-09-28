@@ -1,7 +1,7 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import Universities from '../../data/PrototypeData';
+import PrototypeData from '../../data/PrototypeData';
 import FieldFilter from '../Search/FieldFilter.jsx';
 import RatingFilter from '../Search/RatingFilter.jsx';
 import './MapComponent.css';
@@ -9,33 +9,33 @@ import './MapComponent.css';
 const MapComponent = () => {
     const [selectedFields, setSelectedFields] = React.useState([]);
     const [selectedRatings, setSelectedRatings] = React.useState([]);
-    const [filteredUniversities, setFilteredUniversities] = React.useState(Universities);
+    const [filteredUniversities, setFilteredUniversities] = React.useState(PrototypeData);
 
     const allFields = Array.from(
-        new Set(Universities.flatMap((uni) => uni.fields))
+        new Set(PrototypeData.flatMap((data) => data.fields))
     );
 
     const allRatings = Array.from(
-        new Set(Universities.flatMap((uni) => uni.starRating))
+        new Set(PrototypeData.flatMap((data) => data.starRating))
     );
 
     React.useEffect(() => {
-        let filtered = Universities;
+        let filtered = PrototypeData;
 
         if (selectedFields.length > 0) {
-            filtered = filtered.filter((uni) =>
-                selectedFields.some((field) => uni.fields.includes(field))
+            filtered = filtered.filter((data) =>
+                selectedFields.some((field) => data.fields.includes(field))
             );
         }
 
         if (selectedRatings.length > 0) {
-            filtered = filtered.filter((uni) =>
-                selectedRatings.includes(Math.floor(uni.starRating))
+            filtered = filtered.filter((data) =>
+                selectedRatings.includes(Math.floor(data.starRating))
             );
         }
 
         setFilteredUniversities(filtered);
-    }, [selectedFields, selectedRatings, Universities]);
+    }, [selectedFields, selectedRatings, PrototypeData]);
 
 
     return (
@@ -60,13 +60,13 @@ const MapComponent = () => {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    {filteredUniversities.map((uni) => (
-                        <Marker key={uni.id} position={uni.position}>
+                    {filteredUniversities.map((data) => (
+                        <Marker key={data.id} position={data.position}>
                             <Popup>
-                                <strong>{uni.name}</strong><br/>
-                                Star Rating: {uni.starRating}<br/>
-                                Number of Students: {uni.numberOfStudents}<br/>
-                                Fields: {uni.fields.join(', ')}
+                                <strong>{data.name}</strong><br/>
+                                Star Rating: {data.starRating}<br/>
+                                Number of Students: {data.numberOfStudents}<br/>
+                                Fields: {data.fields.join(', ')}
                             </Popup>
                         </Marker>
                     ))}

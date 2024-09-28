@@ -1,0 +1,24 @@
+.landing-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 20px;
+}
+
+.landing-title {
+    font-size: x-large;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    margin: 10px;
+}
+
+.buttons:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}

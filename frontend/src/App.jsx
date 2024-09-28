@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Header from './components/Header/Header';
 import './App.css'
+import LandingPage from "./pages/LandingPage.jsx";
+import React from "react";
 
 function App() {
     return (
@@ -10,7 +12,8 @@ function App() {
                 <Header />
                 <div className="content">
                     <Routes>
-                        <Route path="/" element={<Home />} />
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/home" element={<Home />} />
                     </Routes>
                 </div>
             </div>

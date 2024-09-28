@@ -16,10 +16,10 @@ const LandingPage = () => {
             <div className="d-flex justify-content-center align-items-center landing-buttons">
                 <Row className="text-center">
                     <Col>
-                        <Button variant="primary" size="lg" className="buttons" onClick={() => navigate('/home')}>
+                        <Button variant="primary" size="lg" className="buttons" onClick={() => navigate('/home', {state: {type: "high_school"}})}>
                             High Schools
                         </Button>
-                        <Button variant="primary" size="lg" className="buttons" onClick={() => navigate('/home')}>
+                        <Button variant="primary" size="lg" className="buttons" onClick={() => navigate('/home', {state: {type: "college"}})}>
                             Colleges
                         </Button>
                     </Col>

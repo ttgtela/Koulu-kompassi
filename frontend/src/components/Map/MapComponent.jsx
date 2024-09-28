@@ -1,26 +1,26 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import PrototypeData from '../../data/PrototypeData';
+import getData from '../../data/PrototypeData';
 import FieldFilter from '../Search/FieldFilter.jsx';
 import RatingFilter from '../Search/RatingFilter.jsx';
 import './MapComponent.css';
 
-const MapComponent = () => {
+const MapComponent = ({type}) => {
     const [selectedFields, setSelectedFields] = React.useState([]);
     const [selectedRatings, setSelectedRatings] = React.useState([]);
-    const [filteredUniversities, setFilteredUniversities] = React.useState(PrototypeData);
+    const [filteredData, setFilteredData] = React.useState(getData(type));
 
     const allFields = Array.from(
-        new Set(PrototypeData.flatMap((data) => data.fields))
+        new Set(getData(type).flatMap((data) => data.fields))
     );
 
     const allRatings = Array.from(
-        new Set(PrototypeData.flatMap((data) => data.starRating))
+        new Set(getData(type).flatMap((data) => data.starRating))
     );
 
     React.useEffect(() => {
-        let filtered = PrototypeData;
+        let filtered = getData(type);
 
         if (selectedFields.length > 0) {
             filtered = filtered.filter((data) =>
@@ -34,8 +34,8 @@ const MapComponent = () => {
             );
         }
 
-        setFilteredUniversities(filtered);
-    }, [selectedFields, selectedRatings, PrototypeData]);
+        setFilteredData(filtered);
+    }, [selectedFields, selectedRatings]);
 
 
     return (
@@ -60,7 +60,7 @@ const MapComponent = () => {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    {filteredUniversities.map((data) => (
+                    {filteredData.map((data) => (
                         <Marker key={data.id} position={data.position}>
                             <Popup>
                                 <strong>{data.name}</strong><br/>

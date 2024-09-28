@@ -1,12 +1,15 @@
-import React from 'react';
 import MapComponent from '../components/Map/MapComponent';
+import { useLocation } from 'react-router-dom';
 import './Home.css';
 
-const Home = () => {
+const Home = (route, navigation) => {
+    const location = useLocation();
+    const {type} = location.state || {};
+
     return (
         <div className={"home"}>
             <h1 className={"title"}>Project Horizon</h1>
-            <MapComponent/>
+            <MapComponent type={type}/>
         </div>
     );
 };

@@ -5,8 +5,11 @@ import getData from '../../data/PrototypeData';
 import FieldFilter from '../Search/FieldFilter.jsx';
 import RatingFilter from '../Search/RatingFilter.jsx';
 import './MapComponent.css';
+import {useNavigate} from "react-router-dom";
+import {Button} from "react-bootstrap";
 
 const MapComponent = ({type}) => {
+    const navigate = useNavigate();
     const [selectedFields, setSelectedFields] = React.useState([]);
     const [selectedRatings, setSelectedRatings] = React.useState([]);
     const [filteredData, setFilteredData] = React.useState(getData(type));
@@ -51,7 +54,17 @@ const MapComponent = ({type}) => {
                     selectedRatings={selectedRatings}
                     setSelectedRatings={setSelectedRatings}
                 />
+
+                <Button
+                    variant="primary"
+                    size="lg"
+                    onClick={() => navigate("/")}
+                    style={{marginTop: "20px"}}
+                >
+                    Back to Title Screen
+                </Button>{' '}
             </div>
+
 
             <div className="map-wrapper" style={{ width: '80%' }}>
                 <MapContainer center={[61.45000766895691, 23.856790847309647]} zoom={13}

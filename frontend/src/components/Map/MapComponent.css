@@ -5,3 +5,12 @@
     justify-content: space-between;
     padding-top: 20px;
 }
+
+.backButton {
+    display: flex;
+    flex-direction: column;
+    height: 2vh;
+    width: 10vw;
+    padding: 20px;
+    box-sizing: border-box;
+}

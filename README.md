@@ -1,5 +1,7 @@
 # Software Design - Group assignment
 
+Progress: Prototype finished as of 29.9.2024
+
 ## Overview
 
 College/High School map
@@ -10,8 +12,6 @@ College/High School map
 - **Maven 3.6.0+**
 - **Node.js 14.x+ (includes npm)**
 - **Git**
-
-## Setup Instructions
 
 ## Windows installation:
 
@@ -30,5 +30,5 @@ College/High School map
    - Use the command npm install in the terminal
    - Install the correct version of Leaflet with npm install -i leaflet
    - Then use the command npm run dev
-# Backend installation:
-   - Run Application.java
+
+Backend installation is identical

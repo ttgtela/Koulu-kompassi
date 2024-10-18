@@ -1,7 +1,9 @@
-package com.jmnt.data;
+package com.jmnt.excelparser;
 
+import com.jmnt.data.University;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,8 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class ExcelParser {
-    public static  Map<Integer,List<University>> parse() {
+    public static Map<Integer,List<University>> parse() {
         List<String> filePaths = new ArrayList<String>();
         Map<Integer,List<University>> map = new HashMap<Integer,List<University>>();
         filePaths.add("src/main/resources/ApplicationResources/pisterajat_2020.xlsx");
@@ -38,7 +41,6 @@ public class ExcelParser {
                 for (Row row : sheet) {
                     for (Cell cell : row) {
                         switch (cell.getCellType()) {
-
                             case STRING:
                                 if (cell.getCellStyle().getIndex() == 20) {
                                     University university = new University(cell.getStringCellValue());

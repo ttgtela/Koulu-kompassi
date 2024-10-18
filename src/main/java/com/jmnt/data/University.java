@@ -33,7 +33,7 @@ public class University {
         this.name = name;
     }
 
-    static class FieldOfStudy {
+    public static class FieldOfStudy {
         public void setName(String name) {
             this.name = name;
         }
@@ -65,7 +65,7 @@ public class University {
 
     }
 
-    static class AdmissionMethod {
+    public static class AdmissionMethod {
         public void setName(String name) {
             this.name = name;
         }

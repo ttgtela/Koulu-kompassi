@@ -5,7 +5,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class MapCaller {
+public class NominatimApiCaller {
     private final String NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 
     public Place[] searchLocation(String location) {

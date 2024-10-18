@@ -14,7 +14,7 @@ public class Place {
     private String type;
     private int place_rank;
     private float importance;
-    private String addresstype;
+    private String adresstype;
     private String name;
     private String display_name;
     private String[] bounding_box;
@@ -99,12 +99,12 @@ public class Place {
         this.importance = importance;
     }
 
-    public String getAddresstype() {
-        return addresstype;
+    public String getAdresstype() {
+        return adresstype;
     }
 
-    public void setAddresstype(String addresstype) {
-        this.addresstype = addresstype;
+    public void setAdresstype(String addresstype) {
+        this.adresstype = addresstype;
     }
 
     public String getName() {

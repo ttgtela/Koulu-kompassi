@@ -3,27 +3,27 @@ package com.jmnt.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Place {
-    private int place_id;
+    private long place_id;
     private String licence;
     private String osm_type;
-    private int osm_id;
-    private float lat;
-    private float lon;
+    private long osm_id;
+    private double lat;
+    private double lon;
     @JsonProperty("class")
     private String classType;
     private String type;
     private int place_rank;
-    private float importance;
-    private String adresstype;
+    private double importance;
+    private String addresstype;
     private String name;
     private String display_name;
-    private String[] bounding_box;
+    private double[] bounding_box;
 
-    public int getPlace_id() {
+    public long getPlace_id() {
         return place_id;
     }
 
-    public void setPlace_id(int place_id) {
+    public void setPlace_id(long place_id) {
         this.place_id = place_id;
     }
 
@@ -43,27 +43,27 @@ public class Place {
         this.osm_type = osm_type;
     }
 
-    public int getOsm_id() {
+    public long getOsm_id() {
         return osm_id;
     }
 
-    public void setOsm_id(int osm_id) {
+    public void setOsm_id(long osm_id) {
         this.osm_id = osm_id;
     }
 
-    public float getLat() {
+    public double getLat() {
         return lat;
     }
 
-    public void setLat(float lat) {
+    public void setLat(double lat) {
         this.lat = lat;
     }
 
-    public float getLon() {
+    public double getLon() {
         return lon;
     }
 
-    public void setLon(float lon) {
+    public void setLon(double lon) {
         this.lon = lon;
     }
 
@@ -91,20 +91,20 @@ public class Place {
         this.place_rank = place_rank;
     }
 
-    public float getImportance() {
+    public double getImportance() {
         return importance;
     }
 
-    public void setImportance(float importance) {
+    public void setImportance(double importance) {
         this.importance = importance;
     }
 
-    public String getAdresstype() {
-        return adresstype;
+    public String getAddresstype() {
+        return addresstype;
     }
 
-    public void setAdresstype(String addresstype) {
-        this.adresstype = addresstype;
+    public void setAddresstype(String addresstype) {
+        this.addresstype = addresstype;
     }
 
     public String getName() {
@@ -123,11 +123,11 @@ public class Place {
         this.display_name = display_name;
     }
 
-    public String[] getBounding_box() {
+    public double[] getBounding_box() {
         return bounding_box;
     }
 
-    public void setBounding_box(String[] bounding_box) {
+    public void setBounding_box(double[] bounding_box) {
         this.bounding_box = bounding_box;
     }
 }

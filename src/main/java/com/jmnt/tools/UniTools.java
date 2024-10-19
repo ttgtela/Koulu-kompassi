@@ -19,5 +19,12 @@ public class UniTools {
         return uniNames;
     }
 
+    public static String normalizeString(String str){
+        str = str.toLowerCase();
+        return str.replace('ä', 'a')
+                .replace('ö', 'o')
+                .replace('å', 'a');
+    }
+
 
 }

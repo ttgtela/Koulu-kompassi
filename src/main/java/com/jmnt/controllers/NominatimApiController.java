@@ -1,6 +1,7 @@
 package com.jmnt.controllers;
 
 import com.jmnt.data.Coord;
+import com.jmnt.data.CoordinateCache;
 import com.jmnt.data.NominatimApiCaller;
 import com.jmnt.data.Place;
 import com.jmnt.tools.UniTools;
@@ -22,19 +23,35 @@ public class NominatimApiController {
 
     public Map<String, Coord> searchAllCoordinates(List<String> schoolNames) {
         Map<String, Coord> coordMap = new HashMap<>();
+
+        CoordinateCache coordinateCache = new CoordinateCache();
+        Map<String, Map<String, Coord>> cache = coordinateCache.getCache();
+
         for (String schoolName : schoolNames) {
-            System.out.println("schoolName: " + schoolName);
+            //System.out.println("schoolName: " + schoolName);
+            if (cache != null) {
+                if (cache.containsKey(schoolName)) {
+                    coordMap.putAll(cache.get(schoolName));
+                    continue;
+                }
+            }
+
+
             Place[] result = nominatimApiCaller.searchLocation(schoolName);
+            cache.put(schoolName, new HashMap<>());
 
             for (Place place : result) {
                 System.out.println(place.getName());
-                System.out.println(place.getAddresstype());
                 if (place.getAddresstype().equals("amenity")) {
                     Coord coord = new Coord(place.getLat(), place.getLon());
                     coordMap.put(place.getName(), coord);
+
+                    cache.get(schoolName).put(place.getName(), coord);
                 }
             }
         }
+        coordinateCache.saveCache(cache);
+        System.out.println("Coordinates searched");
         return coordMap;
     }
 
@@ -43,6 +60,7 @@ public class NominatimApiController {
     public Map<String, Coord> getCoordinates() {
         return searchAllCoordinates(UniTools.getUniversityNames());
     }
+
     @GetMapping("/names")
     public List<String> getNames() {
         return UniTools.getUniversityNames();
@@ -50,6 +68,6 @@ public class NominatimApiController {
 
     @GetMapping("/search")
     public Place[] search() {
-        return nominatimApiCaller.searchLocation("Hämeenlinna");
+        return nominatimApiCaller.searchLocation("Kalevan lukio");
     }
 }

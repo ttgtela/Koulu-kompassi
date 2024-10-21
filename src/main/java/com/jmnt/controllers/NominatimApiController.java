@@ -42,8 +42,9 @@ public class NominatimApiController {
             cache.put(schoolName, new HashMap<>());
 
             for (Place place : result) {
-                System.out.println(place.getName());
-                if (place.getAddresstype().equals("amenity")) {
+                //System.out.println(place.getName());
+                String[] parts = place.getDisplay_name().split(", ");
+                if (place.getAddresstype().equals("amenity") && parts[parts.length-1].equals("Suomi / Finland")) {
                     Coord coord = new Coord(place.getLat(), place.getLon());
                     coordMap.put(place.getName(), coord);
 
@@ -65,10 +66,5 @@ public class NominatimApiController {
     @GetMapping("/names")
     public List<String> getNames() {
         return UniTools.getUniversityNames();
-    }
-
-    @GetMapping("/search")
-    public Place[] search() {
-        return nominatimApiCaller.searchLocation("Kalevan lukio");
     }
 }

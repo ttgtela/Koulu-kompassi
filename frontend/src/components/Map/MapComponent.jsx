@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import getData from '../../data/PrototypeData';
@@ -12,8 +12,9 @@ const MapComponent = ({type}) => {
     const navigate = useNavigate();
     const [selectedFields, setSelectedFields] = React.useState([]);
     const [selectedRatings, setSelectedRatings] = React.useState([]);
-    const [filteredData, setFilteredData] = React.useState(getData(type));
+    const [filteredData, setFilteredData] = React.useState([]);
 
+    /*
     const allFields = Array.from(
         new Set(getData(type).flatMap((data) => data.fields))
     );
@@ -39,32 +40,17 @@ const MapComponent = ({type}) => {
 
         setFilteredData(filtered);
     }, [selectedFields, selectedRatings]);
-
+     */
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getData(type);
+            setFilteredData(data);
+        };
+        fetchData();
+    }, [type]);
 
     return (
         <div className="map-container" style={{display: 'flex'}}>
-            <div className="filter-panel-container" style={{width: '20%', padding: '10px'}}>
-                <FieldFilter
-                    fields={allFields}
-                    selectedFields={selectedFields}
-                    setSelectedFields={setSelectedFields}
-                />
-                <RatingFilter
-                    ratings={allRatings}
-                    selectedRatings={selectedRatings}
-                    setSelectedRatings={setSelectedRatings}
-                />
-
-                <Button
-                    variant="primary"
-                    size="lg"
-                    onClick={() => navigate("/")}
-                    style={{marginTop: "20px"}}
-                >
-                    Back to Title Screen
-                </Button>{' '}
-            </div>
-
 
             <div className="map-wrapper" style={{ width: '80%' }}>
                 <MapContainer center={[61.45000766895691, 23.856790847309647]} zoom={13}
@@ -73,16 +59,18 @@ const MapComponent = ({type}) => {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    {filteredData.map((data) => (
-                        <Marker key={data.id} position={data.position}>
-                            <Popup>
-                                <strong>{data.name}</strong><br/>
-                                Star Rating: {data.starRating}<br/>
-                                Number of Students: {data.numberOfStudents}<br/>
-                                Fields: {data.fields.join(', ')}
-                            </Popup>
-                        </Marker>
-                    ))}
+
+                    {Object.keys(filteredData).map((schoolName) => {
+                        const { lat, lon } = filteredData[schoolName];
+
+                        return (
+                            <Marker key={schoolName} position={[lat, lon]}>
+                                <Popup>
+                                    <strong>{schoolName}</strong>
+                                </Popup>
+                            </Marker>
+                        );
+                    })}
                 </MapContainer>
             </div>
         </div>

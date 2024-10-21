@@ -1,21 +1,19 @@
-const Universities = [
-    {
-        id: 1,
-        name: "Tampere University of Technology",
-        position: [61.45000766895691, 23.856790847309647],
-        starRating: 5.0,
-        numberOfStudents: 0,
-        fields: ["Engineering", "Science"],
-    },
-    {
-        id: 2,
-        name: "Tampere University Central Campus",
-        position: [61.49460932307555, 23.781481032491055],
-        starRating: 4.0,
-        numberOfStudents: 15000,
-        fields: ["Business", "Science"],
-    },
-];
+import {useEffect, useState} from "react";
+import error from "eslint-plugin-react/lib/util/error.js";
+
+const Universities = async () => {
+    try {
+        const response = await fetch("http://localhost:8080/api/coordinates");
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error("Error fetching coordinates for universities:", error);
+        return null;
+    }
+};
 
 const HighSchools = [
     {
@@ -36,14 +34,12 @@ const HighSchools = [
     },
 ];
 
-const getData = (type) => {
-    if(type === "college") {
-        return Universities;
-    }
-    else if(type === "high_school") {
+const getData = async (type) => {
+    if (type === "college") {
+        return await Universities();
+    } else if (type === "high_school") {
         return HighSchools;
-    }
-    else {
+    } else {
         return null;
     }
 };

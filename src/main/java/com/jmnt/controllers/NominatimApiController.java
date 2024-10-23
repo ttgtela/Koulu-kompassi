@@ -52,7 +52,7 @@ public class NominatimApiController {
                 }
             }
         }
-        coordinateCache.saveCache(cache);
+        coordinateCache.saveCache();
         System.out.println("Coordinates searched");
         return coordMap;
     }

@@ -2,8 +2,10 @@ package com.jmnt.tools;
 
 import com.jmnt.data.ParsedUniversityContext;
 import com.jmnt.data.University;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -26,5 +28,14 @@ public class UniTools {
                 .replace('å', 'a');
     }
 
+    public static List<String> fetchHsNames() {
+        RestTemplate restTemplate = new RestTemplate();
+        String[] HsNames = restTemplate.getForObject("http://localhost:8080/api/schools", String[].class);
+        if (HsNames != null){
+            return Arrays.asList(HsNames);
+        } else {
+            throw new RuntimeException("No names found");
+        }
+    }
 
 }

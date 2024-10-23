@@ -1,9 +1,6 @@
 package com.jmnt.controllers;
 
-import com.jmnt.data.Coord;
-import com.jmnt.data.CoordinateCache;
-import com.jmnt.data.NominatimApiCaller;
-import com.jmnt.data.Place;
+import com.jmnt.data.*;
 import com.jmnt.tools.UniTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -58,13 +55,43 @@ public class NominatimApiController {
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
-    @GetMapping("/api/coordinates")
-    public Map<String, Coord> getCoordinates() {
+    @GetMapping("/api/unicoordinates")
+    public Map<String, Coord> getUniCoordinates() {
         return searchAllCoordinates(UniTools.getUniversityNames());
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173")
+    @GetMapping("/api/hscoordinates")
+    public Map<String, Coord> getHsCoordinates() {
+        return searchAllCoordinates(UniTools.fetchHsNames());
+    }
+
+    @GetMapping("/api/numberofcampuses")
+    public Map<String, Integer> getCampuses() {
+        Map<String, Integer> campuses = new HashMap<>();
+        ExamResultCaller examResultCaller = new ExamResultCaller();
+        ExamResultController examResultController = new ExamResultController(examResultCaller);
+        ArrayList<String> schoolNames = examResultController.getSchools();
+
+        for (String schoolName : schoolNames) {
+            Place[] result = nominatimApiCaller.searchLocation(schoolName);
+            for (Place place : result) {
+                if (place.getAddresstype().equals("amenity")){
+                    campuses.put(place.getName(), campuses.getOrDefault(place.getName(), 0) + 1);
+                }
+            }
+        }
+
+        return campuses;
     }
 
     @GetMapping("/names")
     public List<String> getNames() {
         return UniTools.getUniversityNames();
+    }
+
+    @GetMapping("/hsnames")
+    public List<String> getHsNames() {
+        return UniTools.fetchHsNames();
     }
 }

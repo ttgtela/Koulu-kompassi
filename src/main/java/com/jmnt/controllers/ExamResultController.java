@@ -19,7 +19,7 @@ public class ExamResultController {
     }
 
 
-    @GetMapping("/schools")
+    @GetMapping("/api/schools")
     public ArrayList<String> getSchools(){
         ArrayList<String> schools = new ArrayList<>();
         for (ExamResults result : results){

@@ -17,8 +17,6 @@ public class NominatimApiCaller {
         RestTemplate restTemplate = new RestTemplate();
         Place[] places = new Place[0];
         try {
-            //String encodedLocation = URLEncoder.encode(location, StandardCharsets.UTF_8.toString());
-
             long currentTime = System.currentTimeMillis();
             long timeSinceLastRequest = currentTime - lastRequestTime;
             if (timeSinceLastRequest < 1200) {
@@ -28,18 +26,17 @@ public class NominatimApiCaller {
 
             lastRequestTime = System.currentTimeMillis();
 
-            System.out.println(UniTools.normalizeString(location));
             String url = UriComponentsBuilder.fromHttpUrl(NOMINATIM_URL)
                     .queryParam("q", URLEncoder.encode(UniTools.normalizeString(location), StandardCharsets.UTF_8.toString()))
                     .queryParam("format", "json")
                     .toUriString();
-            System.out.println("Request URL: " + url);
+            //System.out.println("Request URL: " + url);
             places = restTemplate.getForObject(url, Place[].class);
         } catch (Exception e) {
             throw new RuntimeException("Error making nominatim API call", e);
         }
         if (places.length == 0) {
-            System.out.println("No places found");
+            System.out.println("No places found for " + location);
         } else {
             System.out.println(places[0].getName());
         }

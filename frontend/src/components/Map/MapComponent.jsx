@@ -60,13 +60,13 @@ const MapComponent = ({type}) => {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
 
-                    {Object.keys(filteredData).map((schoolName) => {
-                        const { lat, lon } = filteredData[schoolName];
+                    {Object.keys(filteredData).map((school) => {
+                        const { lat, lon } = filteredData[school];
 
                         return (
-                            <Marker key={schoolName} position={[lat, lon]}>
+                            <Marker key={school} position={[lat, lon]}>
                                 <Popup>
-                                    <strong>{schoolName}</strong>
+                                    <strong>{school}</strong>
                                 </Popup>
                             </Marker>
                         );

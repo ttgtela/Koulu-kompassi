@@ -19,9 +19,9 @@ public class NominatimApiCaller {
         try {
             long currentTime = System.currentTimeMillis();
             long timeSinceLastRequest = currentTime - lastRequestTime;
-            if (timeSinceLastRequest < 1200) {
+            if (timeSinceLastRequest < 1000) {
                 // Sleep for 1.2 seconds on total because of Nominatim API usage policy (max 1 request per second).
-                Thread.sleep(1200 - timeSinceLastRequest);
+                Thread.sleep(1000 - timeSinceLastRequest);
             }
 
             lastRequestTime = System.currentTimeMillis();

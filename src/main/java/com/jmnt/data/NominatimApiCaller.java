@@ -37,8 +37,6 @@ public class NominatimApiCaller {
         }
         if (places.length == 0) {
             System.out.println("No places found for " + location);
-        } else {
-            System.out.println(places[0].getName());
         }
 
         return places;

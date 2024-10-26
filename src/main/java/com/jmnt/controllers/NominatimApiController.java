@@ -36,10 +36,14 @@ public class NominatimApiController {
             }
 
             Place[] result = nominatimApiCaller.searchLocation(schoolName);
+
+            // We want the empty school entries for cache but not for the actual JSON response to frontend.
+            cache.put(schoolName, new HashMap<>());
+
             if (result.length == 0) {
                 continue;
             }
-            cache.put(schoolName, new HashMap<>());
+
 
             for (Place place : result) {
 
@@ -70,26 +74,6 @@ public class NominatimApiController {
     public Map<String, Map<String, Coord>> getHsCoordinates() {
         return searchAllCoordinates(UniTools.fetchHsNames());
     }
-    /**
-    @GetMapping("/api/numberofcampuses")
-    public Map<String, Integer> getCampuses() {
-        Map<String, Integer> campuses = new HashMap<>();
-        ExamResultCaller examResultCaller = new ExamResultCaller();
-        ExamResultController examResultController = new ExamResultController(examResultCaller);
-        ArrayList<String> schoolNames = examResultController.getSchools();
-
-        for (String schoolName : schoolNames) {
-            Place[] result = nominatimApiCaller.searchLocation(schoolName);
-            for (Place place : result) {
-                if (place.getAddresstype().equals("amenity")){
-                    campuses.put(place.getName(), campuses.getOrDefault(place.getName(), 0) + 1);
-                }
-            }
-        }
-
-        return campuses;
-    }
-     **/
 
     @GetMapping("/names")
     public List<String> getNames() {

@@ -7,18 +7,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 @RestController
 public class ExamResultController {
 
-    private ExamResults[] results;
+    private final ExamResults[] results;
 
     @Autowired
     public ExamResultController(ExamResultCaller caller) {
         this.results = caller.searchExams();
     }
-
-
+    
     @GetMapping("/api/schools")
     public ArrayList<String> getSchools(){
         ArrayList<String> schools = new ArrayList<>();

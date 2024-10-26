@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Own files ###
+src/main/java/com/jmnt/data/uniCoordinatesCache.json

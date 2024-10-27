@@ -336,43 +336,4 @@ public class WebScraper {
 
         return subjectGrades;
     }
-
-    /*
-    public static List<String> getRequirements(List<List<List<String>>> doc) {
-        List<List<List<String>>> tablesData = new ArrayList<>();
-
-        Elements tables = doc.select("table");
-
-        for (Element table : tables) {
-            List<List<String>> tableData = new ArrayList<>();
-            Elements rows = table.select("tr");
-
-            for (Element row : rows) {
-                List<String> rowData = new ArrayList<>();
-
-                Elements headers = row.select("th");
-                if (!headers.isEmpty()) {
-                    for (Element header : headers) {
-                        rowData.add(header.text().trim());
-                    }
-                } else {
-                    Elements cols = row.select("td");
-                    for (Element col : cols) {
-                        rowData.add(col.text().trim());
-                    }
-                }
-
-                if (!rowData.isEmpty()) {
-                    tableData.add(rowData);
-                }
-            }
-
-            if (!tableData.isEmpty()) {
-                tablesData.add(tableData);
-            }
-        }
-
-        return tablesData;
-    }
-     */
 }

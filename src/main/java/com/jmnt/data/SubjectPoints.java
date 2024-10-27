@@ -4,11 +4,11 @@ import java.util.*;
 import static com.jmnt.utilities.GradeUtils.GRADES;
 
 public class SubjectPoints {
-    public Map<String, Map<Character, Float>> getFieldsPoints() {
+    public Map<String, TreeMap<Character, Float>> getFieldsPoints() {
         return fieldsPoints;
     }
 
-    private Map<String, Map<Character, Float>> fieldsPoints;
+    private Map<String, TreeMap<Character, Float>> fieldsPoints;
 
     public int getTableIndex() {
         return tableIndex;
@@ -18,7 +18,7 @@ public class SubjectPoints {
         this.tableIndex = tableIndex;
     }
 
-    public void setFieldsPoints(Map<String, Map<Character, Float>> fieldsPoints) {
+    public void setFieldsPoints(Map<String, TreeMap<Character, Float>> fieldsPoints) {
         this.fieldsPoints = fieldsPoints;
     }
 
@@ -31,7 +31,7 @@ public class SubjectPoints {
     private int bestOf;
 
     public SubjectPoints() {
-        this.fieldsPoints = new HashMap<>();
+        this.fieldsPoints = new TreeMap<>();
         this.tableIndex = 0;
         this.bestOf = 0;
     }
@@ -43,7 +43,7 @@ public class SubjectPoints {
 
     public void addSubject(String subject) {
         if (!fieldsPoints.containsKey(subject)) {
-            fieldsPoints.put(subject, new HashMap<>());
+            fieldsPoints.put(subject, new TreeMap<>(GRADE_COMPARATOR));
         }
     }
 

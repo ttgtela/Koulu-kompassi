@@ -1,6 +1,8 @@
 # Software Design - Group assignment
 
-Progress: Prototype finished as of 29.9.2024
+Progress: Mid-term submission finished as of 27.10.2024
+Prototype finished as of 29.9.2024
+
 
 ## Overview
 

@@ -29,7 +29,7 @@ public class WebScraper {
     public static final List<String> FORBIDDEN_WORDS = Arrays.asList(new String [] {
             "Sisällysluettelo", "Hakukohde", "Yliopisto", "Kynnysehdot"});
     public static final List<String> SUBJECTS = Arrays.asList(new String [] {
-            "äidinkieli", "biologia", "filosofia", "fysiikka", "historia", "kemia", "kieli, pitkä",
+            "äidinkieli", "biologia", "filosofia", "fysiikka", "historia", "lyhyt matematiikka", "pitkä matematiikka", "kemia", "kieli, pitkä",
     "kieli, keskipitkä", "kieli, lyhyt", "maantiede", "psykologia", "terveystieto", "uskonto", "yhteiskuntaoppi"});
     private static final Pattern NUMBER_WORD_PATTERN = Pattern.compile("Pisteytystaulukko:\\s+(yksi|kaksi|kolme|neljä|viisi|kuusi|seitsemän|kahdeksan|yhdeksän)");
 
@@ -59,6 +59,9 @@ public class WebScraper {
         if (matcher.find()) {
             return matcher.group(1);
         }
+        else if(header.contains("parhaat")) {
+            return "yksi";
+        }
         return null;
     }
 
@@ -70,6 +73,21 @@ public class WebScraper {
     }
 
     public static List<String> getMainFieldNames(Document doc) {
+        List<String> h1Texts = new ArrayList<>();
+
+        Elements h1Elements = doc.select("h1");
+
+        for (Element h1 : h1Elements) {
+            String text = h1.text().trim();
+            if (!text.isEmpty() && !FORBIDDEN_WORDS.contains(text)) {
+                h1Texts.add(text);
+            }
+        }
+
+        return h1Texts;
+    }
+
+    public static List<String> getSubFieldNames(Document doc) {
         List<String> h2Texts = new ArrayList<>();
 
         Elements h2Elements = doc.select("h2");
@@ -160,29 +178,34 @@ public class WebScraper {
 
         Elements h2Elements = doc.select("h2");
 
-        for (int i = 0; i < hakukohde.size(); i++) {
+        int minSize = Math.min(hakukohde.size(), Math.min(yliopisto.size(), kynnysehdot.size()));
+        for (int i = 0; i < minSize; i++) {
             if(FORBIDDEN_WORDS.contains(hakukohde.get(i).text()) ||
                     FORBIDDEN_WORDS.contains(yliopisto.get(i).text()) ||
                     FORBIDDEN_WORDS.contains(kynnysehdot.get(i).text())) {continue;}
             String program = hakukohde.get(i).text().trim();
             String university = yliopisto.get(i).text().trim();
             Map<String, Character> required_grades = new HashMap<>();
-            String[] parts = kynnysehdot.get(i).text().trim().split("\\s+ja\\s+");
+            String[] same_grades = kynnysehdot.get(i).text().trim().split("\\s+ja\\s+");
+            String[] or_grades = kynnysehdot.get(i).text().trim().split("\\s+tai\\s+");
             boolean same_grade = false;
+            boolean or_grade = false;
             Character earlier_grade = '-';
 
             Element currentHakukohde = hakukohde.get(i);
             int tableIndex = getTableIndex(doc, currentHakukohde) + h2Difference;
-            System.out.println("tableIndex " + tableIndex);
 
-            if(parts.length >= 2) {
+            if(same_grades.length >= 2) {
                 same_grade = true;
             }
+            else if(or_grades.length >= 2) {
+                or_grade = true;
+            }
 
-            for (int j = parts.length - 1; j >= 0; j--) {
+            for (int j = same_grades.length - 1; j >= 0; j--) {
                 String subjectFound = null;
                 Character gradeFound = '-';
-                var part = parts[j];
+                var part = same_grades[j];
 
                 for (String subject : SUBJECTS) {
                     if (part.toLowerCase().contains(subject.toLowerCase())) {
@@ -206,32 +229,27 @@ public class WebScraper {
 
                     if (found) {
                         String matchedGrade = gradeMatcher.group(1);
-                        System.out.println("Added grade: " + matchedGrade);
 
                         gradeFound = matchedGrade.charAt(0);
 
-                        if (same_grade) {
+                        if (same_grade || or_grade) {
                             earlier_grade = gradeFound;
                         }
                     }
                     else {
-                        if (same_grade) {
-                            System.out.println("Earlier!");
-                            System.out.println(earlier_grade);
+                        if (same_grade || or_grade) {
                             required_grades.put(subjectFound, earlier_grade);
                             continue;
                         }
                     }
 
-                    System.out.println("Added: " + gradeFound);
                     required_grades.put(subjectFound, gradeFound);
                 }
             }
 
-            UniversityProgram universityProgram = new UniversityProgram(program, university, required_grades, tableIndex);
+            UniversityProgram universityProgram = new UniversityProgram(program, university, required_grades, tableIndex, or_grade);
             programData.add(universityProgram);
         }
-        System.out.println(programData.size());
         return programData;
     }
 
@@ -239,7 +257,6 @@ public class WebScraper {
         List<SubjectPoints> subjectPointsData = new ArrayList<>();
 
         Elements wrappers = doc.select("div.wpb_wrapper");
-        System.out.println("Size: " + wrappers.size());
         int currentIndex = h2Difference;
 
         for (Element wrapper : wrappers) {
@@ -262,27 +279,25 @@ public class WebScraper {
                         System.out.println(number);
                     }
                     if (child.tagName().equalsIgnoreCase("table")) {
-                        List<SubjectPoints> parsedTables = parseTable(child, currentIndex, number);
-                        subjectPointsData.addAll(parsedTables);
+                        SubjectPoints parsedTable = parseTable(child, currentIndex, number);
+                        subjectPointsData.add(parsedTable);
                     }
                 }
             }
         }
 
-        for (SubjectPoints sp : subjectPointsData) {
-            System.out.println(sp);
-        }
-
         return subjectPointsData;
     }
 
-    private static List<SubjectPoints> parseTable(Element table, int index, int bestof) {
-        List<SubjectPoints> subjectGrades = new ArrayList<>();
+    private static SubjectPoints parseTable(Element table, int index, int bestof) {
+        SubjectPoints subjectPoints = new SubjectPoints();
+        subjectPoints.setTableIndex(index);
+        subjectPoints.setBestOf(bestof);
 
         Elements headerRows = table.select("thead tr");
         if (headerRows.isEmpty()) {
             System.err.println("Warning: No header row found in table.");
-            return subjectGrades;
+            return subjectPoints;
         }
 
         Element headerRow = headerRows.first();
@@ -310,8 +325,6 @@ public class WebScraper {
             }
 
             String subject = cells.get(0).text().trim();
-            SubjectPoints sp = new SubjectPoints();
-
             for (int i = 1; i < cells.size(); i++) {
                 String pointsStr = cells.get(i).text().trim();
 
@@ -327,13 +340,10 @@ public class WebScraper {
                     continue;
                 }
 
-                sp.updateGrade(subject, grade, points);
+                subjectPoints.updateGrade(subject, grade, points);
             }
-            sp.setTableIndex(index);
-            sp.setBestOf(bestof);
-            subjectGrades.add(sp);
         }
 
-        return subjectGrades;
+        return subjectPoints;
     }
 }

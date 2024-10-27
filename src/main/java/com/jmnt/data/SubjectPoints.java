@@ -24,11 +24,15 @@ public class SubjectPoints {
 
     private int tableIndex;
 
+    public int getBestOf() {
+        return bestOf;
+    }
+
     public void setBestOf(int bestOf) {
         this.bestOf = bestOf;
     }
 
-    private int bestOf;
+    public int bestOf;
 
     public SubjectPoints() {
         this.fieldsPoints = new TreeMap<>();

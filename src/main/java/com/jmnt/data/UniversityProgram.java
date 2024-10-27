@@ -24,11 +24,12 @@ public class UniversityProgram {
         this.requiredGrades.put(subject, grade);
     }
 
-    public UniversityProgram(String program, String university, Map<String, Character> requiredGrades, int tableIndex) {
+    public UniversityProgram(String program, String university, Map<String, Character> requiredGrades, int tableIndex, boolean or_flag) {
         this.program = program;
         this.university = university;
         this.requiredGrades = requiredGrades;
         this.tableIndex = tableIndex;
+        this.or_flag = or_flag;
     }
 
     @Override
@@ -43,6 +44,16 @@ public class UniversityProgram {
 
     private String program;
     private String university;
+
+    public boolean isOr_flag() {
+        return or_flag;
+    }
+
+    public void setOr_flag(boolean or_flag) {
+        this.or_flag = or_flag;
+    }
+
+    private boolean or_flag;
 
     public int getTableIndex() {
         return tableIndex;

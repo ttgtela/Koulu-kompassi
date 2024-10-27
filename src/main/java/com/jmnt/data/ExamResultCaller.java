@@ -24,6 +24,7 @@ public class ExamResultCaller {
         this.objectMapper = new ObjectMapper();
     }
 
+    
     public ExamResults[] searchExams() {
 
         try {

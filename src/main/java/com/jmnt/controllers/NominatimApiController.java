@@ -44,7 +44,6 @@ public class NominatimApiController {
                 continue;
             }
 
-
             for (Place place : result) {
 
                 String[] parts = place.getDisplay_name().split(", ");

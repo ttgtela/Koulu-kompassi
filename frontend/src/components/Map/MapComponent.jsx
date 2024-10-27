@@ -142,7 +142,7 @@ const MapComponent = ({type}) => {
                                 </div>
                             ) :
                             (
-                                <p><strong>Field:</strong> {selectedField.name}</p>
+                                <p>{selectedField.name}</p>
                             )}
 
                         <div>
@@ -151,7 +151,7 @@ const MapComponent = ({type}) => {
                                 {selectedField===null ?data.fields?.map((field, fieldIndex) => (
                                     <li key={fieldIndex}>
                                         <Button onClick={() =>toggleFieldData(field)}>
-                                        <p><strong>Field:</strong> {field.name}</p>
+                                        <p>{field.name}</p>
                                         </Button>
                                     </li>
                                 ))

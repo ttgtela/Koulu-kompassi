@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class PointsCache extends Cache<Collection<UniversityPoints>> {
     private Map<String, Collection<UniversityPoints>> cache;
-    private final static String CACHE_FILE_PATH = "src/main/java/com/jmnt/data/uniPointsCache.json";
+    private final static String CACHE_FILE_PATH = "src/main/java/com/jmnt/cache/uniPointsCache.json";
 
     public PointsCache() {
         super(CACHE_FILE_PATH, getCacheType());

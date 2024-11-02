@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 public class CoordinateCache extends Cache<Map<String, Coord>> {
     // for every school name, there is map containing campus names and corresponding coordinates.
     private Map<String, Map<String, Coord>> cache;
-    private final static String CACHE_FILE_PATH = "src/main/java/com/jmnt/data/schoolCoordinatesCache.json";
+    private final static String CACHE_FILE_PATH = "src/main/java/com/jmnt/cache/schoolCoordinatesCache.json";
 
     public CoordinateCache() {
         super(CACHE_FILE_PATH, getCacheType());

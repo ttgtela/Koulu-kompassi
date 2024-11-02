@@ -2,13 +2,16 @@ package com.jmnt.controllers;
 
 import com.jmnt.data.*;
 import com.jmnt.tools.WebScraper;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.formula.functions.T;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -35,7 +38,10 @@ public class UniversityRequirementsController {
             "https://yliopistovalinnat.fi/todistusvalinnan-pisteytykset-vuosina-2023-2025/viestintatieteet-ja-yhteiskuntatieteet",
     });
 
+    public static final String FILE_LOCATION = "src/main/java/com/jmnt/cache/";
+
     private static final long DELAY_MS = 2000;
+    private static final boolean CACHE_ENABLED = false;
 
     public List<UniversityTopField> getUniversityPoints() {
         List<UniversityTopField> universityTops = new ArrayList<>();
@@ -43,13 +49,25 @@ public class UniversityRequirementsController {
         PointsCache pointsCache = new PointsCache();
         Map<String, Collection<UniversityPoints>> cache = pointsCache.getCache();
 
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < SCRAPED_WEBSITES.size(); i++) {
             UniversityTopField universityTop = new UniversityTopField();
             List<UniversityPoints> universityPoints = new ArrayList<>();
+            boolean doc_exists = false;
 
             Document doc = null;
             try {
-                doc = WebScraper.fetchDocument(SCRAPED_WEBSITES.get(i));
+                String[] parts = SCRAPED_WEBSITES.get(i).split("/");
+                String name = parts[parts.length - 1];
+                File f = new File(FILE_LOCATION + name);
+                if(f.exists()) {
+                    String content = FileUtils.readFileToString(f, "UTF-8");
+                    doc = Jsoup.parse(content);
+                    doc_exists = true;
+                }
+                else {
+                    doc = WebScraper.fetchDocument(SCRAPED_WEBSITES.get(i));
+                    FileUtils.writeStringToFile(f, doc.outerHtml(), "UTF-8");
+                }
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -60,7 +78,7 @@ public class UniversityRequirementsController {
             String headerKey = mainHeaders.get(1);
             universityTop.setField(headerKey); // get the second h1 header;
 
-            if (cache != null && cache.containsKey(headerKey)) {
+            if (cache != null && CACHE_ENABLED && cache.containsKey(headerKey)) {
                 Collection<UniversityPoints> cachedPoints = cache.get(headerKey);
                 List<UniversityPoints> cachedList = new ArrayList<>(cachedPoints);
 
@@ -99,7 +117,9 @@ public class UniversityRequirementsController {
             cache.put(universityTop.getField(), universityPoints);
 
             try {
-                Thread.sleep(DELAY_MS);
+                if(!doc_exists) {
+                    Thread.sleep(DELAY_MS);
+                }
             }
             catch (InterruptedException e) {
                 e.printStackTrace();

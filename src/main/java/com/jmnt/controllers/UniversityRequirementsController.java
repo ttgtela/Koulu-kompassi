@@ -2,6 +2,7 @@ package com.jmnt.controllers;
 
 import com.jmnt.data.*;
 import com.jmnt.tools.WebScraper;
+import org.apache.poi.ss.formula.functions.T;
 import org.jsoup.nodes.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,10 @@ public class UniversityRequirementsController {
     public List<UniversityTopField> getUniversityPoints() {
         List<UniversityTopField> universityTops = new ArrayList<>();
 
-        //TO_DO CACHE
-        for(int i = 0; i < SCRAPED_WEBSITES.size(); i++) {
+        PointsCache pointsCache = new PointsCache();
+        Map<String, Collection<UniversityPoints>> cache = pointsCache.getCache();
+
+        for(int i = 0; i < 2; i++) {
             UniversityTopField universityTop = new UniversityTopField();
             List<UniversityPoints> universityPoints = new ArrayList<>();
 
@@ -54,7 +57,17 @@ public class UniversityRequirementsController {
             }
 
             List<String> mainHeaders = WebScraper.getMainFieldNames(doc);
-            universityTop.setField(mainHeaders.get(1)); // get the second h1 header;
+            String headerKey = mainHeaders.get(1);
+            universityTop.setField(headerKey); // get the second h1 header;
+
+            if (cache != null && cache.containsKey(headerKey)) {
+                Collection<UniversityPoints> cachedPoints = cache.get(headerKey);
+                List<UniversityPoints> cachedList = new ArrayList<>(cachedPoints);
+
+                universityTop.setUniversityData(cachedList);
+                universityTops.add(universityTop);
+                continue;
+            }
 
             List<String> subHeaders = WebScraper.getSubFieldNames(doc);
             List<UniversityProgram> program_data = WebScraper.getUniversityProgramData(doc);
@@ -83,6 +96,7 @@ public class UniversityRequirementsController {
 
             universityTop.setUniversityData(universityPoints);
             universityTops.add(universityTop);
+            cache.put(universityTop.getField(), universityPoints);
 
             try {
                 Thread.sleep(DELAY_MS);
@@ -93,7 +107,7 @@ public class UniversityRequirementsController {
                 break;
             }
         }
-
+        pointsCache.save();
         return universityTops;
     }
 

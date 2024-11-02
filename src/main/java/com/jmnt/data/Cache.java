@@ -25,8 +25,10 @@ public class Cache<T> {
     private Map<String, T> loadCacheFromFile() {
         try (FileReader reader = new FileReader(filePath)) {
             Gson gson = new Gson();
-            Type cacheType = new TypeToken<Map<String, Map<String, Coord>>>() {}.getType();
-            cache = gson.fromJson(reader, cacheType);
+            cache = gson.fromJson(reader, typeT);
+            if (cache == null) {
+                cache = new HashMap<>();
+            }
         } catch (IOException e) {
             System.out.println("Error reading " + filePath);
             cache = new HashMap<>();

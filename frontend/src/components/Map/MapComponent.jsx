@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import getData from '../../data/NameAndCoord.jsx';
 import FieldFilter from '../Search/FieldFilter.jsx';
 import RatingFilter from '../Search/RatingFilter.jsx';
+import TypeFilter from "../Search/TypeFilter.jsx";
 import './MapComponent.css';
 import {useNavigate} from "react-router-dom";
 import {Button} from "react-bootstrap";
@@ -13,6 +14,8 @@ const MapComponent = ({type}) => {
     const navigate = useNavigate();
     const [selectedFields, setSelectedFields] = React.useState([]);
     const [selectedRatings, setSelectedRatings] = React.useState([]);
+    const [selectedTypes, setSelectedTypes] = React.useState([]);
+    const [availableTypes, setAvailableTypes] = React.useState([]);
     const [filteredData, setFilteredData] = React.useState([]);
     const [isPanelOpen, setIsPanelOpen]=useState(false);
     const [selectedSchool, setSelectedSchool] = useState(null);
@@ -45,13 +48,56 @@ const MapComponent = ({type}) => {
         setFilteredData(filtered);
     }, [selectedFields, selectedRatings]);
      */
+
+    /*
+    React.useEffect(() => {
+        let filtered = getData(type);
+
+        if (selectedTypes.length > 0) {
+            filtered = filtered.filter((data) =>
+                selectedTypes.some((type) => data.type.includes(type))
+            );
+        }
+        setFilteredData(filtered);
+    }, [selectedTypes]); */
+
     useEffect(() => {
         const fetchData = async () => {
             const data = await getData(type);
-            setFilteredData(data);
+
+            let flattenedData = [];
+
+            const allSchoolTypes = Array.from(
+                new Set(Object.values(data).flatMap((school) =>
+                    Object.values(school).map((campusInfo) => campusInfo.type)))
+            )
+
+            for (const [schoolName, campuses] of Object.entries(data)) {
+                for (const [campusName, campusInfo] of Object.entries(campuses)) {
+                    flattenedData.push( {
+                       schoolName,
+                       campusName,
+                       coord: campusInfo.coord,
+                       type: campusInfo.type
+                    });
+                }
+            }
+
+            if (!Array.isArray(flattenedData)) {
+                console.error("Data is not an array:", flattenedData);
+                return;
+            }
+
+            setAvailableTypes(allSchoolTypes);
+            setSelectedTypes(allSchoolTypes);
+            setFilteredData(flattenedData);
         };
         fetchData();
     }, [type]);
+
+
+    const filteredMarkers = filteredData.filter((campus) =>
+        selectedTypes.includes(campus.type));
 
     const togglePanel = (school) => {
         setSelectedSchool(school);
@@ -170,7 +216,22 @@ const MapComponent = ({type}) => {
     return (
         <>
             <div className="map-container" style={{display: 'flex'}}>
+                <div className="filter-panel-container" style={{width: '20%', padding: '10px'}}>
+                    <TypeFilter
+                        types={availableTypes}
+                        selectedTypes={selectedTypes}
+                        setSelectedTypes={setSelectedTypes}
+                    />
 
+                    <Button
+                        variant="primary"
+                        size="lg"
+                        onClick={() => navigate("/")}
+                        style={{marginTop: "20px"}}
+                    >
+                        Back to Title Screen
+                    </Button>{' '}
+                </div>
                 <div className="map-wrapper" style={{width: '80%'}}>
                     <MapContainer center={[61.45000766895691, 23.856790847309647]} zoom={13}
                                   style={{height: "100vh", width: "100vw"}} scrollWheelZoom={true}>
@@ -179,22 +240,21 @@ const MapComponent = ({type}) => {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
 
-                        {Object.keys(filteredData).map((university) => {
+                        {filteredMarkers.map((item) => {
+                            /*
                                 return Object.keys(filteredData[university]).map((campus) => {
-                                        const {lat, lon} = filteredData[university][campus];
+                                        const {coord, type} = filteredData[university][campus]; */
+                                        const {lat, lon} = item.coord;
                                         return (
-                                            <Marker key={`${university}-${campus}`} position={[lat, lon]}>
+                                            <Marker key={`${item.schoolName}-${item.campusName}`} position={[lat, lon]}>
                                                 <Popup>
-                                                    <Button onClick={() => togglePanel(university)}>
-                                                        <strong>{campus}</strong>
+                                                    <Button onClick={() => togglePanel(item.schoolName)}>
+                                                        <strong>{item.campusName}</strong>
                                                     </Button>
                                                 </Popup>
                                             </Marker>
                                         );
-                                    }
-                                )
-                            }
-                        )
+                            })
                         }
                     </MapContainer>
                 </div>

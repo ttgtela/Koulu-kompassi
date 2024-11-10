@@ -10,14 +10,45 @@ import {useNavigate} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import UniData from "../../data/UniData.jsx";
 import SidePanel from "../Sidepanel/SidePanel.jsx";
+import starImage from "../../assets/star.png";
+import emptyStarImage from "../../assets/emptyStar.png";
+
+const MapMarker = ({ item, togglePanel }) => {
+    const [isStarColored, setIsStarColored] = React.useState(false);
+
+    const handleStarClick = () => {
+        setIsStarColored((prevState) => !prevState);
+    };
+
+    const { lat, lon } = item.coord;
+
+    return (
+        <Marker position={[lat, lon]}>
+            <Popup>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <img
+                        src={isStarColored ? starImage : emptyStarImage}
+                        alt="star icon"
+                        onClick={handleStarClick}
+                        style={{ width: '24px', height: '24px', marginRight: '8px', cursor: 'pointer' }}
+                    />
+                    <Button onClick={() => togglePanel(item.schoolName)}>
+                        <strong>{item.campusName}</strong>
+                    </Button>
+                </div>
+            </Popup>
+        </Marker>
+    );
+};
+
 
 const MapComponent = ({type}) => {
     const navigate = useNavigate();
     const [selectedFields, setSelectedFields] = React.useState([]);
     const [selectedRatings, setSelectedRatings] = React.useState([]);
     const [filteredData, setFilteredData] = React.useState([]);
-    const [isPanelOpen, setIsPanelOpen]=useState(false);
-    const [selectedSchool, setSelectedSchool] = useState(null);
+    const [isPanelOpen, setIsPanelOpen]= React.useState(false);
+    const [selectedSchool, setSelectedSchool] = React.useState(null);
     const [selectedTypes, setSelectedTypes] = React.useState([]);
     const [availableTypes, setAvailableTypes] = React.useState([]);
 
@@ -96,8 +127,6 @@ const MapComponent = ({type}) => {
         setSelectedSchool(null);
     };
 
-
-
     return (
         <>
             <div className="map-container" style={{display: 'flex'}}>
@@ -126,18 +155,13 @@ const MapComponent = ({type}) => {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
 
-                        {filteredMarkers.map((item) => {
-                            const {lat, lon} = item.coord;
-                            return (
-                                <Marker key={`${item.schoolName}-${item.campusName}`} position={[lat, lon]}>
-                                    <Popup>
-                                        <Button onClick={() => togglePanel(item.schoolName)}>
-                                            <strong>{item.campusName}</strong>
-                                        </Button>
-                                    </Popup>
-                                </Marker>
-                            );
-                        })
+                        {filteredMarkers.map((item) => (
+                            <MapMarker
+                                key={`${item.schoolName}-${item.campusName}`}
+                                item={item}
+                                togglePanel={togglePanel}
+                            />
+                        ))
                         }
 
                     </MapContainer>

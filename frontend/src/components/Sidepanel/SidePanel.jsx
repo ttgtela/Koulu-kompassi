@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import UniData from "../../data/UniData.jsx";
 import {Button} from "react-bootstrap";
+import AdmissionChart from "../../data/AdmissionDataGraph.jsx";
 
 const SidePanel=({school, closePanel, type,isOpen}) =>{
     const [data, setData] = useState(null);
@@ -9,6 +10,8 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
     const [selectedSchool, setSelectedSchool] = useState(null);
     const [selectedField,setSelectedField]=useState(null);
     const [isFieldDataOpen,setIsFieldDataOpen]=useState(false);
+    const [isGraphOpen, setIsGraphOpen] = useState(false);
+    const [selectedMethod, setSelectedMethod] = useState(null);
 
 
     const toggleFieldData = (field) => {
@@ -21,11 +24,24 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
         setSelectedField(null);
     }
 
+    const showGraph = (method) => {
+        setSelectedMethod(method);
+        setIsGraphOpen(true);
+    };
+
+    const closeGraph = () => {
+        setIsGraphOpen(false);
+        setSelectedMethod(null);
+    };
+
 
     function FieldData({field,closeFieldData}){
         return (
             <div className={`field-data-${field} ${isFieldDataOpen ? "field-data-open" : ""}`}>
-                <button onClick={closeFieldData} className="close-field-data-button">
+                <button onClick={()=>{
+                    closeFieldData();
+                    closeGraph();
+                }} className="close-field-data-button">
                     Close
                 </button>
                 <h4>Admission Methods:</h4>
@@ -33,8 +49,8 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
                     {field.admissionMethods?.map((method, methodIndex) => (
                         <li key={methodIndex}>
                             <p><strong>Method:</strong> {method.name}</p>
-                            <p><strong>Required Points:</strong> {method.requiredPoints}
-                            </p>
+                            <p><strong>Required Points:</strong> {method.requiredPoints}</p>
+                            <Button onClick={() => showGraph(method)}>View Chart</Button>
                         </li>
                     ))}
                 </ul>
@@ -43,7 +59,9 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
 
     if (type === "high_school") {
         return (<div className={`side-panel ${isOpen ? "side-panel-open" : ""}`}>
-                <button onClick={closePanel} className="close-panel-button">
+                <button onClick={()=>{
+                    closePanel();
+                }} className="close-panel-button">
                     &times; Close
                 </button>
                 <h2>{school}</h2>
@@ -71,7 +89,10 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
 
         return (
             <div className={`side-panel ${isOpen ? "side-panel-open" : ""}`}>
-                <button onClick={closePanel} className="close-panel-button">
+                <button onClick={()=> {
+                    closePanel();
+                    closeGraph();
+                }} className="close-panel-button">
                     &times; Close
                 </button>
                 <h2>{school}</h2>
@@ -102,6 +123,14 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
                                         <FieldData field={selectedField} closeFieldData={closeFieldData} />
                                     </li>)}
                             </ul>
+                            {isGraphOpen && selectedMethod && (
+                                <div className="graph-panel">
+                                    <button onClick={closeGraph} className="close-graph-button">
+                                        &times; Close chart
+                                    </button>
+                                    <AdmissionChart name={data.name} field={selectedField.name} admissionMethod={selectedMethod.name}/>
+                                </div>
+                            )}
                         </div>
                     </>
                 )

@@ -12,13 +12,22 @@ import UniData from "../../data/UniData.jsx";
 import SidePanel from "../Sidepanel/SidePanel.jsx";
 import starImage from "../../assets/star.png";
 import emptyStarImage from "../../assets/emptyStar.png";
+import Cookies from 'js-cookie';
 
-const MapMarker = ({ item, togglePanel }) => {
+const MapMarker = ({ item, togglePanel, toggleFavourite, favourites }) => {
+    //const isStarColored = favourites.includes(item.schoolName);
+
     const [isStarColored, setIsStarColored] = React.useState(false);
+    // Is star empty or filled
+    React.useEffect(() => {
+        setIsStarColored(favourites.includes(item.schoolName));
+    }, [favourites, item.schoolName]);
+
 
     const handleStarClick = () => {
-        setIsStarColored((prevState) => !prevState);
+        toggleFavourite(item.schoolName);
     };
+
 
     const { lat, lon } = item.coord;
 
@@ -41,44 +50,53 @@ const MapMarker = ({ item, togglePanel }) => {
     );
 };
 
+const saveFavourites = (newFavourite) => {
+    let favourites = Cookies.get('favourites');
+    if (favourites) {
+        favourites = JSON.parse(favourites);
+    } else {
+        favourites = [];
+    }
+
+    if (favourites.length > 6) {
+        favourites.shift();
+    }
+
+    if (!favourites.includes(newFavourite)) {
+        favourites.push(newFavourite);
+    }
+    Cookies.set('favourites', JSON.stringify(favourites), { expires: 7 });
+};
+
+const removeFavourite = (removedFavourite) => {
+    let favourites = Cookies.get('favourites');
+    if (favourites) {
+        favourites = JSON.parse(favourites);
+    } else {
+        favourites = [];
+    }
+
+    favourites = favourites.filter((favourite) => favourite !== removedFavourite);
+    Cookies.set('favourites', JSON.stringify(favourites), { expires: 7 });
+};
+
+const getFavourites = () => {
+    const favourites = Cookies.get('favourites');
+    return JSON.parse(favourites);
+};
+
 
 const MapComponent = ({type}) => {
     const navigate = useNavigate();
-    const [selectedFields, setSelectedFields] = React.useState([]);
-    const [selectedRatings, setSelectedRatings] = React.useState([]);
+    //const [selectedFields, setSelectedFields] = React.useState([]);
+    //const [selectedRatings, setSelectedRatings] = React.useState([]);
     const [filteredData, setFilteredData] = React.useState([]);
     const [isPanelOpen, setIsPanelOpen]= React.useState(false);
     const [selectedSchool, setSelectedSchool] = React.useState(null);
     const [selectedTypes, setSelectedTypes] = React.useState([]);
     const [availableTypes, setAvailableTypes] = React.useState([]);
+    const [favourites, setFavourites] = React.useState([]);
 
-    /*
-    const allFields = Array.from(
-        new Set(getData(type).flatMap((data) => data.fields))
-    );
-
-    const allRatings = Array.from(
-        new Set(getData(type).flatMap((data) => data.starRating))
-    );
-
-    React.useEffect(() => {
-        let filtered = getData(type);
-
-        if (selectedFields.length > 0) {
-            filtered = filtered.filter((data) =>
-                selectedFields.some((field) => data.fields.includes(field))
-            );
-        }
-
-        if (selectedRatings.length > 0) {
-            filtered = filtered.filter((data) =>
-                selectedRatings.includes(Math.floor(data.starRating))
-            );
-        }
-
-        setFilteredData(filtered);
-    }, [selectedFields, selectedRatings]);
-     */
     useEffect(() => {
         const fetchData = async () => {
             const data = await getData(type);
@@ -127,6 +145,21 @@ const MapComponent = ({type}) => {
         setSelectedSchool(null);
     };
 
+    useEffect(() => {
+        setFavourites(getFavourites());
+    }, [favourites]);
+
+    const toggleFavourite = (schoolName) => {
+        setFavourites((prevFavourites) => {
+           if (prevFavourites.includes(schoolName)) {
+               removeFavourite(schoolName);
+           } else {
+               saveFavourites(schoolName);
+           }
+           return getFavourites();
+        });
+    };
+
     return (
         <>
             <div className="map-container" style={{display: 'flex'}}>
@@ -137,6 +170,21 @@ const MapComponent = ({type}) => {
                         setSelectedTypes={setSelectedTypes}
                     />
 
+                    <h3> Favourites </h3>
+                    {favourites.map((schoolName) => (
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <img
+                                src={favourites.includes(schoolName) ? starImage : emptyStarImage}
+                                alt="star icon"
+                                onClick={() => toggleFavourite(schoolName)}
+                                style={{width: '24px', height: '24px', marginRight: '8px', cursor: 'pointer'}}
+                            />
+                            <Button onClick={() => togglePanel(schoolName)}>
+                                {schoolName}
+                            </Button>
+                        </div>
+                    ))
+                    }
                     <Button
                         variant="primary"
                         size="lg"
@@ -147,7 +195,7 @@ const MapComponent = ({type}) => {
                     </Button>{' '}
                 </div>
 
-                <div className="map-wrapper" style={{width: '80%'}}>
+                    <div className="map-wrapper" style={{width: '80%'}}>
                     <MapContainer center={[61.45000766895691, 23.856790847309647]} zoom={13}
                                   style={{height: "100vh", width: "100vw"}} scrollWheelZoom={true}>
                         <TileLayer
@@ -160,6 +208,8 @@ const MapComponent = ({type}) => {
                                 key={`${item.schoolName}-${item.campusName}`}
                                 item={item}
                                 togglePanel={togglePanel}
+                                toggleFavourite={toggleFavourite}
+                                favourites={favourites}
                             />
                         ))
                         }

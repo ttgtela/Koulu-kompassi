@@ -15,12 +15,15 @@ import emptyStarImage from "../../assets/emptyStar.png";
 import Cookies from 'js-cookie';
 
 const MapMarker = ({ item, togglePanel, toggleFavourite, favourites }) => {
-
     const [isStarColored, setIsStarColored] = React.useState(false);
+
     // Is star empty or filled
     React.useEffect(() => {
-        setIsStarColored(favourites.includes(item.schoolName));
-    }, [favourites, item.schoolName]);
+        const shouldBeColored = favourites.includes(item.schoolName);
+        if(isStarColored !== shouldBeColored) {
+            setIsStarColored(shouldBeColored);
+        }
+    }, [favourites, item.schoolName, isStarColored]);
 
 
     const handleStarClick = () => {
@@ -86,7 +89,6 @@ const getFavourites = () => {
     } else {
         return [];
     }
-
 };
 
 
@@ -151,7 +153,7 @@ const MapComponent = ({type}) => {
 
     useEffect(() => {
         setFavourites(getFavourites());
-    }, [favourites]);
+    }, []);
 
     const toggleFavourite = (schoolName) => {
         setFavourites((prevFavourites) => {

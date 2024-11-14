@@ -15,7 +15,6 @@ import emptyStarImage from "../../assets/emptyStar.png";
 import Cookies from 'js-cookie';
 
 const MapMarker = ({ item, togglePanel, toggleFavourite, favourites }) => {
-    //const isStarColored = favourites.includes(item.schoolName);
 
     const [isStarColored, setIsStarColored] = React.useState(false);
     // Is star empty or filled
@@ -82,7 +81,12 @@ const removeFavourite = (removedFavourite) => {
 
 const getFavourites = () => {
     const favourites = Cookies.get('favourites');
-    return JSON.parse(favourites);
+    if (favourites) {
+        return JSON.parse(favourites);
+    } else {
+        return [];
+    }
+
 };
 
 
@@ -195,7 +199,7 @@ const MapComponent = ({type}) => {
                     </Button>{' '}
                 </div>
 
-                    <div className="map-wrapper" style={{width: '80%'}}>
+                <div className="map-wrapper" style={{width: '80%'}}>
                     <MapContainer center={[61.45000766895691, 23.856790847309647]} zoom={13}
                                   style={{height: "100vh", width: "100vw"}} scrollWheelZoom={true}>
                         <TileLayer

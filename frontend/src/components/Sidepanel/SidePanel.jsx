@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import UniData from "../../data/UniData.jsx";
 import {Button} from "react-bootstrap";
 import AdmissionChart from "../../data/AdmissionDataGraph.jsx";
+import {AdmissionData} from "../../data/AdmissionData.jsx";
 
 const SidePanel=({school, closePanel, type,isOpen}) =>{
     const [data, setData] = useState(null);
@@ -34,11 +35,38 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
         setSelectedMethod(null);
     };
 
+    const isGraphAvailable = async(method) => {
+        try {
+            const result = await AdmissionData(data.name, selectedField.name, method.name);
+            return Object.keys(result).length!==1;
+        } catch (error) {
+            return false;
+        }
+
+    };
+
 
     function FieldData({field,closeFieldData}){
+        const [availability, setAvailability] = useState({});
+
+        useEffect(() => {
+            const checkAvailability = async () => {
+                const availabilityMap = {};
+                await Promise.all(
+                    (field.admissionMethods || []).map(async (method) => {
+                        const available = await isGraphAvailable(method);
+                        availabilityMap[method.name] = available;
+                    })
+                );
+                setAvailability(availabilityMap);
+            };
+
+            checkAvailability();
+        }, [field]);
+
         return (
-            <div className={`field-data-${field} ${isFieldDataOpen ? "field-data-open" : ""}`}>
-                <button onClick={()=>{
+            <div className={`field-data-${field.name || ''} ${isFieldDataOpen ? "field-data-open" : ""}`}>
+                <button onClick={() => {
                     closeFieldData();
                     closeGraph();
                 }} className="close-field-data-button">
@@ -48,9 +76,13 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
                 <ul>
                     {field.admissionMethods?.map((method, methodIndex) => (
                         <li key={methodIndex}>
-                            <p><strong>Method:</strong> {method.name}</p>
-                            <p><strong>Required Points:</strong> {method.requiredPoints}</p>
-                            <Button onClick={() => showGraph(method)}>View Chart</Button>
+                            <p><strong>Method:</strong> {method.name || 'N/A'}</p>
+                            <p><strong>Required Points:</strong> {method.requiredPoints || 'N/A'}</p>
+                            {availability[method.name] ? (
+                                <Button onClick={() => showGraph(method)}>View Chart</Button>
+                            ) : (
+                                <div></div>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -108,9 +140,7 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
                             (
                                 <p>{selectedField.name}</p>
                             )}
-
                         <div>
-
                             <ul>
                                 {selectedField===null ?data.fields?.map((field, fieldIndex) => (
                                         <li key={fieldIndex}>

@@ -119,17 +119,37 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
         if (loading) return <div className="side-panel">Loading...</div>;
         if (error) return <div className="side-panel">Error: {error}</div>;
 
-        return (
-            <div className={`side-panel ${isOpen ? "side-panel-open" : ""}`}>
-                <button onClick={()=> {
-                    closePanel();
-                    closeGraph();
-                }} className="close-panel-button">
-                    &times; Close
-                </button>
-                <h2>{school}</h2>
-                {data && (
-                    <>
+        if (isGraphOpen && data && selectedField && selectedMethod){
+            return(
+                <div className={`side-panel ${isOpen ? "side-panel-open" : ""}`}>
+                    <button onClick={() => {
+                        closePanel();
+                        closeGraph();
+                    }} className="close-panel-button">
+                        &times; Close
+                    </button>
+                    <div className="graph-panel">
+                        <button onClick={closeGraph} className="close-graph-button">
+                            &times; Close chart
+                        </button>
+                        <AdmissionChart name={data.name} field={selectedField.name}
+                                        admissionMethod={selectedMethod.name}/>
+                    </div>
+                </div>
+            )
+        }
+
+    return (
+        <div className={`side-panel ${isOpen ? "side-panel-open" : ""}`}>
+            <button onClick={() => {
+                closePanel();
+                closeGraph();
+            }} className="close-panel-button">
+                &times; Close
+            </button>
+            <h2>{school}</h2>
+            {data && (
+                <>
                         {selectedField === null ?
                             (
                                 <div>

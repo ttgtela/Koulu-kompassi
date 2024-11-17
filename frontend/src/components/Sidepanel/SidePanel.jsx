@@ -131,9 +131,12 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
                         &times; Close
                     </button>
                     <div className="graph-panel">
+                        <h2>{data.name}</h2>
+                        <h3>{selectedField.name}</h3>
                         <button onClick={closeGraph} className="close-graph-button">
                             &times; Close chart
                         </button>
+                        <h4>{selectedMethod.name}</h4>
                         <AdmissionChart name={data.name} field={selectedField.name}
                                         admissionMethod={selectedMethod.name}/>
                     </div>

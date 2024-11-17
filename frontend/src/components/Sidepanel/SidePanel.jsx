@@ -3,6 +3,7 @@ import UniData from "../../data/UniData.jsx";
 import {Button} from "react-bootstrap";
 import AdmissionChart from "../../data/AdmissionDataGraph.jsx";
 import {AdmissionData} from "../../data/AdmissionData.jsx";
+import './SidePanel.css';
 
 const SidePanel=({school, closePanel, type,isOpen}) =>{
     const [data, setData] = useState(null);
@@ -13,6 +14,7 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
     const [isFieldDataOpen,setIsFieldDataOpen]=useState(false);
     const [isGraphOpen, setIsGraphOpen] = useState(false);
     const [selectedMethod, setSelectedMethod] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
 
     const toggleFieldData = (field) => {
@@ -139,7 +141,11 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
             )
         }
 
-    return (
+        const filteredFields =
+            data?.fields?.filter((field) =>
+                field.name.toLowerCase().includes(searchTerm.toLowerCase())
+            ) || [];
+        return (
         <div className={`side-panel ${isOpen ? "side-panel-open" : ""}`}>
             <button onClick={() => {
                 closePanel();
@@ -155,15 +161,22 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
                                 <div>
                                     <p><strong>University Name:</strong>{data.name}</p>
                                     <h3>Fields of Study:</h3>
+                                    <input
+                                        type="text"
+                                        placeholder="Search fields of study"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="search-input"
+                                    />
                                 </div>
                             ) :
                             (
                                 <p>{selectedField.name}</p>
                             )}
-                        <div>
-                            <ul>
-                                {selectedField===null ?data.fields?.map((field, fieldIndex) => (
-                                        <li key={fieldIndex}>
+                    <div>
+                        <ul>
+                            {selectedField === null ? filteredFields?.map((field, fieldIndex) => (
+                                    <li key={fieldIndex}>
                                             <Button onClick={() =>toggleFieldData(field)}>
                                                 <p>{field.name}</p>
                                             </Button>

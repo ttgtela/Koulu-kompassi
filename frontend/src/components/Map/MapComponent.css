@@ -44,3 +44,9 @@
     font-size: 20px;
     cursor: pointer;
 }
+
+.search-bar {
+    position: fixed;
+    width: 650px;
+    top: 230px;
+}

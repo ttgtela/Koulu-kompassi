@@ -13,6 +13,7 @@ import SidePanel from "../Sidepanel/SidePanel.jsx";
 import starImage from "../../assets/star.png";
 import emptyStarImage from "../../assets/emptyStar.png";
 import Cookies from 'js-cookie';
+import SearchBar from "../SearchBar/SearchBar.jsx";
 
 const MapMarker = ({ item, togglePanel, toggleFavourite, favourites }) => {
     const [isStarColored, setIsStarColored] = React.useState(false);
@@ -52,8 +53,8 @@ const MapMarker = ({ item, togglePanel, toggleFavourite, favourites }) => {
     );
 };
 
-const saveFavourites = (newFavourite) => {
-    let favourites = Cookies.get('favourites');
+const saveFavourites = (newFavourite, type) => {
+    let favourites = Cookies.get(type + 'favourites');
     if (favourites) {
         favourites = JSON.parse(favourites);
     } else {
@@ -67,11 +68,11 @@ const saveFavourites = (newFavourite) => {
     if (!favourites.includes(newFavourite)) {
         favourites.push(newFavourite);
     }
-    Cookies.set('favourites', JSON.stringify(favourites), { expires: 7 });
+    Cookies.set(type + 'favourites', JSON.stringify(favourites), { expires: 7 });
 };
 
-const removeFavourite = (removedFavourite) => {
-    let favourites = Cookies.get('favourites');
+const removeFavourite = (removedFavourite, type) => {
+    let favourites = Cookies.get(type + 'favourites');
     if (favourites) {
         favourites = JSON.parse(favourites);
     } else {
@@ -79,11 +80,11 @@ const removeFavourite = (removedFavourite) => {
     }
 
     favourites = favourites.filter((favourite) => favourite !== removedFavourite);
-    Cookies.set('favourites', JSON.stringify(favourites), { expires: 7 });
+    Cookies.set(type + 'favourites', JSON.stringify(favourites), { expires: 7 });
 };
 
-const getFavourites = () => {
-    const favourites = Cookies.get('favourites');
+const getFavourites = (type) => {
+    const favourites = Cookies.get(type + 'favourites');
     if (favourites) {
         return JSON.parse(favourites);
     } else {
@@ -142,8 +143,9 @@ const MapComponent = ({type}) => {
         selectedTypes.includes(campus.type));
 
     const togglePanel = (school) => {
+        closePanel();
         setSelectedSchool(school);
-        setIsPanelOpen(!isPanelOpen);
+        setIsPanelOpen((prev) => !prev);
     };
 
     const closePanel = () => {
@@ -152,17 +154,17 @@ const MapComponent = ({type}) => {
     };
 
     useEffect(() => {
-        setFavourites(getFavourites());
+        setFavourites(getFavourites(type));
     }, []);
 
     const toggleFavourite = (schoolName) => {
         setFavourites((prevFavourites) => {
            if (prevFavourites.includes(schoolName)) {
-               removeFavourite(schoolName);
+               removeFavourite(schoolName, type);
            } else {
-               saveFavourites(schoolName);
+               saveFavourites(schoolName, type);
            }
-           return getFavourites();
+           return getFavourites(type);
         });
     };
 
@@ -170,6 +172,13 @@ const MapComponent = ({type}) => {
         <>
             <div className="map-container" style={{display: 'flex'}}>
                 <div className="filter-panel-container" style={{width: '20%', padding: '10px'}}>
+                    <div className="search-bar">
+                        <SearchBar
+                            type={type}
+                            togglePanel={togglePanel}
+                        />
+                    </div>
+
                     <TypeFilter
                         types={availableTypes}
                         selectedTypes={selectedTypes}

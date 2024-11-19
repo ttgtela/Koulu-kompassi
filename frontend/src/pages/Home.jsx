@@ -3,6 +3,7 @@ import {Button} from "react-bootstrap";
 import MapComponent from '../components/Map/MapComponent';
 import { useLocation } from 'react-router-dom';
 import './Home.css';
+import SearchBar from "../components/SearchBar/SearchBar.jsx";
 
 const Home = (route, navigation) => {
     const location = useLocation();

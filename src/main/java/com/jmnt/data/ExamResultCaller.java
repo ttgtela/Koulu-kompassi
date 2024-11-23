@@ -50,10 +50,10 @@ public class ExamResultCaller {
         }
     }
 
-    public ExamResults[] searchStats(String schoolname, String time) {
+    public ExamResults[] searchStats(String schoolname, String year) {
 
         schoolname = schoolname.replaceAll(" ", "%20");
-        VIPUNEN_URL  = "https://api.vipunen.fi/api/resources/ytl_arvosanat/data?filter=lukio%3D%3D%27" + schoolname + "%27%20and%20%28tutkintokertaKoodi%3D%3D%27" + time + "K%27%20or%20tutkintokertaKoodi%3D%3D%27" + time + "S%27%29&sort=%28-arvosanapisteet%29&offset=0&";
+        VIPUNEN_URL  = "https://api.vipunen.fi/api/resources/ytl_arvosanat/data?filter=lukio%3D%3D%27" + schoolname + "%27%20and%20%28tutkintokertaKoodi%3D%3D%27" + year + "K%27%20or%20tutkintokertaKoodi%3D%3D%27" + year + "S%27%29&sort=%28-arvosanapisteet%29&offset=0&";
 
         try {
 
@@ -77,10 +77,10 @@ public class ExamResultCaller {
         }
     }
 
-    public int searchStudents(String schoolname, String time) {
+    public int searchStudents(String schoolname, String year) {
 
         schoolname = schoolname.replaceAll(" ", "%20");
-        VIPUNEN_URL = "https://api.vipunen.fi/api/resources/ytl_arvosanat/data/count?filter=lukio%3D%3D%27" + schoolname + "%27%20and%20%28tutkintokertaKoodi%3D%3D%27" + time + "K%27%20or%20tutkintokertaKoodi%3D%3D%27" + time + "S%27%29%20and%20%28koeKoodi%3D%3D%27A%27%20or%20koeKoodi%3D%3D%27A5%27%29";
+        VIPUNEN_URL = "https://api.vipunen.fi/api/resources/ytl_arvosanat/data/count?filter=lukio%3D%3D%27" + schoolname + "%27%20and%20%28tutkintokertaKoodi%3D%3D%27" + year + "K%27%20or%20tutkintokertaKoodi%3D%3D%27" + year + "S%27%29%20and%20%28koeKoodi%3D%3D%27A%27%20or%20koeKoodi%3D%3D%27A5%27%29";
         try {
 
             HttpRequest request = HttpRequest.newBuilder()

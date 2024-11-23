@@ -3,13 +3,18 @@ package com.jmnt.controllers;
 import com.jmnt.data.ExamResultCaller;
 import com.jmnt.data.ExamResults;
 import com.jmnt.data.SchoolStats;
+import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 public class ExamResultController {
 
     private final ExamResultCaller caller;
@@ -24,7 +29,7 @@ public class ExamResultController {
     }
 
     private static class CustomGradeComparator implements Comparator<String> {
-        private static final List<String> gradeOrder = Arrays.asList("L", "E", "M", "C", "B", "A", "I");
+        private static final List<String> gradeOrder = Arrays.asList("I", "A", "B", "C", "M", "E", "L");
 
         @Override
         public int compare(String name1, String name2) {
@@ -33,7 +38,7 @@ public class ExamResultController {
             return Integer.compare(index1, index2);
         }
     }
-    
+    @CrossOrigin(origins = "http://localhost:5173/home")
     @GetMapping("/api/schools")
     public ArrayList<String> getSchools(){
         ArrayList<String> schools = new ArrayList<>();
@@ -45,16 +50,14 @@ public class ExamResultController {
         return schools;
     }
 
-    @GetMapping("/api/stats")
-    public SchoolStats getSchoolStats(){
-        String school = "Tampereen teknillinen lukio";
-        String time = "2024";
+    public SchoolStats getStats(String school, String year){
+
         if (statsMap.containsKey(school)){
             return statsMap.get(school);
         }
 
-        ExamResults[] results = caller.searchStats(school, time);
-        int numberOfStudents = caller.searchStudents(school, time);
+        ExamResults[] results = caller.searchStats(school, year);
+        int numberOfStudents = caller.searchStudents(school, year);
         float numberOfExams = 0;
         float totalGrades = 0;
 
@@ -78,5 +81,19 @@ public class ExamResultController {
         return stats;
     }
 
+    @CrossOrigin(origins = "http://localhost:5173/home")
+    @GetMapping("/api/stats/{school}/{year}/examgrades")
+    public ResponseEntity<Map<String, Integer>> getExamGrades(@PathVariable String school, @PathVariable String year){
+        SchoolStats stats = getStats(school, year);
+        return ResponseEntity.ok(stats.getExamGrades());
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173/home")
+    @GetMapping("/api/stats/{school}/{year}/studentgrades")
+    public ResponseEntity<Pair<Integer, Float>> getStudentGrades(@PathVariable String school, @PathVariable String year){
+        SchoolStats stats = getStats(school, year);
+        Pair<Integer, Float> pair = new Pair<>(stats.getStudentCount(), stats.getAverageGrade());
+        return ResponseEntity.ok(pair);
+    }
 
 }

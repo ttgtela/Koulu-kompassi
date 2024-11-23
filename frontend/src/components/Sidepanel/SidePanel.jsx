@@ -4,6 +4,7 @@ import {Button} from "react-bootstrap";
 import AdmissionChart from "../../data/AdmissionDataGraph.jsx";
 import {AdmissionData} from "../../data/AdmissionData.jsx";
 import './SidePanel.css';
+import HsChart from "../../data/HsDataGraph.jsx";
 
 const SidePanel=({school, closePanel, type,isOpen}) =>{
     const [data, setData] = useState(null);
@@ -99,6 +100,7 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
                     &times; Close
                 </button>
                 <h2>{school}</h2>
+                <HsChart school={school} year={2024}/>
             </div>
         )
     } else {

@@ -1,14 +1,9 @@
 package com.jmnt.tools;
 
 import com.jmnt.data.SubjectPoints;
-import com.jmnt.data.UniversityPoints;
-import com.jmnt.utilities.GradeUtils;
 import com.jmnt.data.UniversityProgram;
-import org.jsoup.Connection;
-import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
@@ -17,7 +12,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jmnt.utilities.GradeUtils.GRADES;
+import static com.jmnt.tools.GradeTools.GRADES;
 
 public class WebScraper {
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"

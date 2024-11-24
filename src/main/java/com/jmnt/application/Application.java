@@ -9,7 +9,9 @@ import org.springframework.context.annotation.ComponentScan;
 		"com.jmnt.controllers",
 		"com.jmnt.configuration",
 		"com.jmnt.data",
-		"com.jmnt.excelparser"
+		"com.jmnt.excelparser",
+		"com.jmnt.services",
+		"com.jmnt.config"
 })
 public class Application {
 	public static void main(String[] args) {

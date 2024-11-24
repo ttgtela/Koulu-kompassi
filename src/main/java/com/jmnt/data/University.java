@@ -63,6 +63,17 @@ public class University {
             return name;
         }
 
+        @Override
+        public String toString() {
+            StringBuilder methods = new StringBuilder();
+            for (AdmissionMethod method : admissionMethods) {
+                methods.append("\n\t\t").append(method.toString());
+            }
+            return "FieldOfStudy{" +
+                    "name='" + name + '\'' +
+                    ", admissionMethods=[" + methods + "\n\t]" +
+                    '}';
+        }
     }
 
     public static class AdmissionMethod {
@@ -89,6 +100,26 @@ public class University {
         public double getRequiredPoints() {
             return requiredPoints;
         }
+
+        @Override
+        public String toString() {
+            return "AdmissionMethod{" +
+                    "name='" + name + '\'' +
+                    ", requiredPoints=" + requiredPoints +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder fieldList = new StringBuilder();
+        for (FieldOfStudy field : fields) {
+            fieldList.append("\n\t").append(field.toString());
+        }
+        return "University{" +
+                "name='" + name + '\'' +
+                ", fields=[" + fieldList + "\n]" +
+                '}';
     }
 }
 

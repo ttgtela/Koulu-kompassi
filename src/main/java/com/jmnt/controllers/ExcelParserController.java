@@ -2,7 +2,9 @@ package com.jmnt.controllers;
 
 import com.jmnt.data.University;
 import com.jmnt.data.ParsedUniversityContext;
+import com.jmnt.services.UniversityService;
 import com.jmnt.tools.UniTools;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +19,15 @@ import java.util.Map;
 @RequestMapping("/api/excel")
 public class ExcelParserController {
 
+    @Autowired
+    private UniversityService universityService;
+
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/universities")
     public ResponseEntity<List<University>> getUniversities() {
         try {
-            ParsedUniversityContext data = ParsedUniversityContext.getInstance();
-            return ResponseEntity.ok(data.getUniversities().get(2024));
+            List<University> universities = universityService.getUniversities(2024);
+            return ResponseEntity.ok(universities);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

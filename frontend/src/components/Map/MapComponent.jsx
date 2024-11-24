@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import getData from '../../data/NameAndCoord.jsx';
 import FieldFilter from '../Search/FieldFilter.jsx';
 import RatingFilter from '../Search/RatingFilter.jsx';
+import GradeFilter from '../Search/GradeFilter.jsx';
 import TypeFilter from "../Search/TypeFilter.jsx";
 import './MapComponent.css';
 import {useNavigate} from "react-router-dom";
@@ -171,7 +172,7 @@ const MapComponent = ({type}) => {
     return (
         <>
             <div className="map-container" style={{display: 'flex'}}>
-                <div className="filter-panel-container" style={{width: '20%', padding: '10px'}}>
+                <div className="filter-panel-container" style={{width: '25%', padding: '10px'}}>
                     <div className="search-bar">
                         <SearchBar
                             type={type}
@@ -200,6 +201,8 @@ const MapComponent = ({type}) => {
                         </div>
                     ))
                     }
+                    <GradeFilter/>
+
                     <Button
                         variant="primary"
                         size="lg"
@@ -208,6 +211,7 @@ const MapComponent = ({type}) => {
                     >
                         Back to Title Screen
                     </Button>{' '}
+
                 </div>
 
                 <div className="map-wrapper" style={{width: '80%'}}>

@@ -3,7 +3,6 @@ import {Button} from "react-bootstrap";
 import MapComponent from '../components/Map/MapComponent';
 import { useLocation } from 'react-router-dom';
 import './Home.css';
-import SearchBar from "../components/SearchBar/SearchBar.jsx";
 
 const Home = (route, navigation) => {
     const location = useLocation();
@@ -11,7 +10,7 @@ const Home = (route, navigation) => {
 
     return (
         <div className={"home"}>
-            <h1 className={"title"}>Project Horizon</h1>
+            <h1 className={"title"}>Koulu-Kompassi</h1>
             <MapComponent type={type}/>
         </div>
     );

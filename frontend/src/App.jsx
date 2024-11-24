@@ -9,7 +9,6 @@ function App() {
     return (
         <Router>
             <div className="App">
-                <Header className="header"/>
                 <div className="content">
                     <Routes>
                         <Route path="/" element={<LandingPage />} />

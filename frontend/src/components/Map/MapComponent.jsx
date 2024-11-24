@@ -62,7 +62,7 @@ const saveFavourites = (newFavourite, type) => {
         favourites = [];
     }
 
-    if (favourites.length > 6) {
+    if (favourites.length > 5) {
         favourites.shift();
     }
 
@@ -181,6 +181,7 @@ const MapComponent = ({type}) => {
                     </div>
 
                     <TypeFilter
+                        dataType={type}
                         types={availableTypes}
                         selectedTypes={selectedTypes}
                         setSelectedTypes={setSelectedTypes}
@@ -188,7 +189,7 @@ const MapComponent = ({type}) => {
 
                     <h3> Favourites </h3>
                     {favourites.map((schoolName) => (
-                        <div style={{display: 'flex', alignItems: 'center'}}>
+                        <div style={{display: 'flex', alignItems: 'center'}} key={schoolName}>
                             <img
                                 src={favourites.includes(schoolName) ? starImage : emptyStarImage}
                                 alt="star icon"

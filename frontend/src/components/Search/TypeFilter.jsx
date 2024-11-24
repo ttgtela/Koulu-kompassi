@@ -1,6 +1,8 @@
 import React from 'react';
 
-const TypeFilter = ({ types, selectedTypes, setSelectedTypes }) => {
+const TypeFilter = ({ dataType, types, selectedTypes, setSelectedTypes }) => {
+    if (dataType !== "college") {return}
+
     const handleCheckboxChange = (type) => {
         if (selectedTypes.includes(type)) {
             setSelectedTypes(selectedTypes.filter((f) => f !== type));

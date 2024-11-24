@@ -26,6 +26,7 @@ public class UniversityService {
 
     public static final List<String> SCRAPED_WEBSITES = Arrays.asList(
             "https://yliopistovalinnat.fi/todistusvalinnan-pisteytykset-vuosina-2023-2025/biokemia-biologia-ja-ymparistotieteet-seka-biolaaketiede",
+            "https://yliopistovalinnat.fi/todistusvalinnan-pisteytykset-vuosina-2023-2025/diplomi-insinoori-ja-arkkitehtikoulutus",
             "https://yliopistovalinnat.fi/todistusvalinnan-pisteytykset-vuosina-2023-2025/elintarviketiede-ja-ravitsemustiede",
             "https://yliopistovalinnat.fi/todistusvalinnan-pisteytykset-vuosina-2023-2025/farmasia-laaketieteelliset-alat-ja-terveystieteet",
             "https://yliopistovalinnat.fi/todistusvalinnan-pisteytykset-vuosina-2023-2025/filosofia-historia-ja-teologia",
@@ -236,7 +237,36 @@ public class UniversityService {
                 for (Map.Entry<String, RelevantData> entry : scraped_points.entrySet()) {
                     int score = fuzzyScore.fuzzyScore(entry.getKey(), field.getName());
 
-                    logger.info("Heuristic score for {}: {} is {}", university.getName(), field.getName(), score);
+                    if(field.getName().contains("DIA-yhteisvalinta")) {
+                        var university_engineer_fields = EngineerFields.UNIVERSITY_FIELDS_MAP.get(university.getName());
+                        if(university_engineer_fields == null) {
+                            logger.error("university_engineer_fields is null {} cannot be found", university.getName());
+                        }
+                        int score2 = 0;
+                        String best_scored_field = null;
+                        for(String engineer_field : university_engineer_fields) {
+                            int new_score = fuzzyScore.fuzzyScore(engineer_field, field.getName());
+                            if(new_score > score2) {
+                                score2 = new_score;
+                                best_scored_field = engineer_field;
+                            }
+                        }
+                        if(score2 >= HEURISTIC_THRESHOLD) {
+                            CombinedUniversityData combinedUniversityData = new CombinedUniversityData();
+                            combinedUniversityData.setUniversityName(university.getName());
+                            combinedUniversityData.setFieldName(field.getName());
+                            combinedUniversityData.setUniversityPoints(requirementsData.get(1).getUniversityData().getFirst().getFieldsPoints());
+                            combinedUniversityData.setTopField("Diplomi-insinööri- ja arkkitehtikoulutus");
+                            combinedUniversityData.setScrapedProgramName(best_scored_field);
+                            combinedUniversityData.setAdmissionMethods(field.getAdmissionMethods());
+
+                            combined.add(combinedUniversityData);
+                        }
+
+                        break;
+                    }
+
+                    logger.info("Heuristic score for {}: {} is {}", entry.getKey(), field.getName(), score);
 
                     if(score >= HEURISTIC_THRESHOLD) {
                         logger.info("HEURISTIC good for: University {}, with the program {}", university.getName(), field.getName());

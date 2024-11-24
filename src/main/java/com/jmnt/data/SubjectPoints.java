@@ -1,7 +1,7 @@
 package com.jmnt.data;
 
 import java.util.*;
-import static com.jmnt.utilities.GradeUtils.GRADES;
+import static com.jmnt.tools.GradeTools.GRADES;
 
 public class SubjectPoints {
     public Map<String, TreeMap<Character, Float>> getFieldsPoints() {

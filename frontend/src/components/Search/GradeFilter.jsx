@@ -1,4 +1,3 @@
-// src/components/GradeFilter.jsx
 import React, { useState, useEffect } from 'react';
 
 const GradeFilter = () => {
@@ -61,7 +60,6 @@ const GradeFilter = () => {
         fetchFields();
     }, []);
 
-    // Handle grade selection change
     const handleGradeChange = (subject, value) => {
         setSelectedGrades(prevGrades => ({
             ...prevGrades,

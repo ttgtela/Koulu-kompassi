@@ -62,4 +62,14 @@ public class UniversityRequirementsController {
         }
     }
 
+    @GetMapping("/api/wherestudy")
+    public ResponseEntity<List<WhereStudy>> getWhereStudyData() {
+        try {
+            List<WhereStudy> data = universityService.getWhereStudy();
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            System.err.println("Error fetching wherestudy data: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

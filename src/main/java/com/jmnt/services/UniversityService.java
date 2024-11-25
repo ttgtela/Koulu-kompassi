@@ -66,6 +66,37 @@ public class UniversityService {
 
     private static int HEURISTIC_THRESHOLD = 15;
 
+    public List<WhereStudy> getWhereStudy() {
+        ParsedUniversityContext data = ParsedUniversityContext.getInstance();
+        List<UniversityTopField> scraped = data.getScrapedData();
+
+        List<WhereStudy> whereStudyList = new ArrayList<>();
+
+        for(UniversityTopField field : scraped) {
+            WhereStudy whereStudy = new WhereStudy();
+            whereStudy.setField(field.getField());
+
+            if(field.getField().equals("Diplomi-insinööri- ja arkkitehtikoulutus")) {
+                for(String engineer_university : EngineerFields.UNIVERSITY_FIELDS_MAP.keySet()) {
+                    whereStudy.getUniversities().add(engineer_university);
+                }
+                whereStudyList.add(whereStudy);
+                continue;
+             }
+
+            for(var unidata : field.getUniversityData()) {
+                for(var group : unidata.getGroup()) {
+                    if(!whereStudy.getUniversities().contains(group.getUniversity())) {
+                        whereStudy.getUniversities().add(group.getUniversity());
+                    }
+                }
+            }
+            whereStudyList.add(whereStudy);
+        }
+
+        return whereStudyList;
+    }
+
     public List<University> getUniversities(int year) {
         ParsedUniversityContext data = ParsedUniversityContext.getInstance();
         List<University> universities = data.getUniversities().get(year);
@@ -77,7 +108,7 @@ public class UniversityService {
         return universities;
     }
 
-    public List<UniversityTopField> getUniversityRequirements() {
+    public static List<UniversityTopField> getUniversityRequirements() {
         List<UniversityTopField> universityTops = new ArrayList<>();
 
         PointsCache pointsCache = new PointsCache();
@@ -287,7 +318,7 @@ public class UniversityService {
         return combined;
     }
 
-    private String normalizeFieldName(String fieldName) {
+    private static String normalizeFieldName(String fieldName) {
         if (fieldName == null) return "";
         return fieldName.trim().toLowerCase()
                 .replaceAll("[,\\.]", "")

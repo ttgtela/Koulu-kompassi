@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
-@RequestMapping("/api/combined")
 public class CombinedDataController {
 
     private final UniversityService universityService;
@@ -21,7 +20,7 @@ public class CombinedDataController {
         this.universityService = universityService;
     }
 
-    @GetMapping
+    @GetMapping("/api/combined")
     public ResponseEntity<List<CombinedUniversityData>> getCombinedData() {
         try {
             List<CombinedUniversityData> combinedData = universityService.getCombinedData();

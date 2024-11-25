@@ -66,7 +66,6 @@ public class NominatimApiController {
             coordMap.put(schoolName, innerMap);
         }
         coordinateCache.saveCache();
-        System.out.println("Coordinates searched");
         return coordMap;
     }
 

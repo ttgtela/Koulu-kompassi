@@ -90,9 +90,10 @@ public class ExamResultController {
 
     @CrossOrigin(origins = "http://localhost:5173/home")
     @GetMapping("/api/stats/{school}/{year}/studentgrades")
-    public ResponseEntity<Pair<Integer, Float>> getStudentGrades(@PathVariable String school, @PathVariable String year){
+    public ResponseEntity<Map<Integer, Float>> getStudentGrades(@PathVariable String school, @PathVariable String year){
         SchoolStats stats = getStats(school, year);
-        Pair<Integer, Float> pair = new Pair<>(stats.getStudentCount(), stats.getAverageGrade());
+        Map<Integer, Float> pair = new HashMap<>();
+        pair.put(stats.getStudentCount(), stats.getAverageGrade());
         return ResponseEntity.ok(pair);
     }
 

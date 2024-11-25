@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { HsData } from './HsData.jsx';
+import { HsExam } from './HsExam.jsx';
 
 const HsChart = ({ school, year }) => {
     const [data, setData] = useState([]);
@@ -11,13 +11,12 @@ const HsChart = ({ school, year }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await HsData(school, year);
+            const result = await HsExam(school, year);
             let transformedData;
             if (result) {
                 if (Object.keys(result).length===1){
                     transformedData=null
                     setData(transformedData);
-
                 }
                 else {
                     transformedData = Object.keys(result).map(grade => ({

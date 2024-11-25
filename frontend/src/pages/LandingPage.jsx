@@ -28,7 +28,7 @@ const LandingPage = () => {
                         </Button>
                         <Button variant="primary" size="lg" className="buttons"
                                 onClick={() => navigate('/home', {state: {type: "college"}})}>
-                            Colleges / Universitys
+                            Colleges / Universities
                         </Button>
                     </Col>
                 </Row>

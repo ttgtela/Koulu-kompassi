@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import getData from '../../data/NameAndCoord.jsx';
-import FieldFilter from '../Search/FieldFilter.jsx';
 import RatingFilter from '../Search/RatingFilter.jsx';
 import GradeFilter from '../Search/GradeFilter.jsx';
 import TypeFilter from "../Search/TypeFilter.jsx";
@@ -45,7 +44,7 @@ const MapMarker = ({ item, togglePanel, toggleFavourite, favourites }) => {
                         onClick={handleStarClick}
                         style={{ width: '24px', height: '24px', marginRight: '8px', cursor: 'pointer' }}
                     />
-                    <Button onClick={() => togglePanel(item.schoolName)}>
+                    <Button onClick={() => togglePanel(item.schoolName, false)}>
                         <strong>{item.campusName}</strong>
                     </Button>
                 </div>
@@ -96,8 +95,6 @@ const getFavourites = (type) => {
 
 const MapComponent = ({type}) => {
     const navigate = useNavigate();
-    //const [selectedFields, setSelectedFields] = React.useState([]);
-    //const [selectedRatings, setSelectedRatings] = React.useState([]);
     const [filteredData, setFilteredData] = React.useState([]);
     const [isPanelOpen, setIsPanelOpen]= React.useState(false);
     const [selectedSchool, setSelectedSchool] = React.useState(null);
@@ -143,9 +140,18 @@ const MapComponent = ({type}) => {
     const filteredMarkers = filteredData.filter((campus) =>
         selectedTypes.includes(campus.type));
 
-    const togglePanel = (school) => {
+    const togglePanel = (chosenSchool, isCenteringNeeded) => {
         closePanel();
-        setSelectedSchool(school);
+
+        if (isCenteringNeeded) {
+            const schoolsData = filteredData.filter(school => school.schoolName === chosenSchool)
+
+            if (schoolsData.length > 0) {
+                const { lat, lon } = schoolsData[0].coord;
+                centerMap(lat, lon);
+            }
+        }
+        setSelectedSchool(chosenSchool);
         setIsPanelOpen((prev) => !prev);
     };
 
@@ -167,6 +173,16 @@ const MapComponent = ({type}) => {
            }
            return getFavourites(type);
         });
+    };
+
+    const mapRef = useRef()
+
+    const centerMap = (lat, lon) => {
+        if (mapRef.current) {
+            setTimeout(() => {
+                mapRef.current.setView([lat, lon], 13);
+            }, 100);
+        }
     };
 
     return (
@@ -196,7 +212,7 @@ const MapComponent = ({type}) => {
                                 onClick={() => toggleFavourite(schoolName)}
                                 style={{width: '24px', height: '24px', marginRight: '8px', cursor: 'pointer'}}
                             />
-                            <Button onClick={() => togglePanel(schoolName)}>
+                            <Button onClick={() => togglePanel(schoolName, true)}>
                                 {schoolName}
                             </Button>
                         </div>
@@ -217,7 +233,7 @@ const MapComponent = ({type}) => {
 
                 <div className="map-wrapper" style={{width: '80%'}}>
                     <MapContainer center={[61.45000766895691, 23.856790847309647]} zoom={13}
-                                  style={{height: "100vh", width: "100vw"}} scrollWheelZoom={true}>
+                                  style={{height: "100vh", width: "100vw"}} scrollWheelZoom={true} ref={mapRef}>
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

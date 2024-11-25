@@ -65,7 +65,7 @@ const SearchBar = ({ type, togglePanel }) => {
                                 onMouseDown={() => {
                                     setSearchQuery(item);
                                     setFocus(false);
-                                    togglePanel(item);
+                                    togglePanel(item, true);
                                 }}
                             >
                                 {item}

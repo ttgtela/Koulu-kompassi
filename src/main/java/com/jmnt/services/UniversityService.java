@@ -101,10 +101,8 @@ public class UniversityService {
         ParsedUniversityContext data = ParsedUniversityContext.getInstance();
         List<University> universities = data.getUniversities().get(year);
         if (universities == null) {
-            logger.warn("No universities found for year: {}", year);
             return new ArrayList<>();
         }
-        logger.info("Fetched {} universities for year {}", universities.size(), year);
         return universities;
     }
 
@@ -128,20 +126,16 @@ public class UniversityService {
                     String content = FileUtils.readFileToString(f, "UTF-8");
                     doc = Jsoup.parse(content);
                     doc_exists = true;
-                    logger.debug("Loaded cached document for URL: {}", SCRAPED_WEBSITES.get(i));
                 } else {
                     doc = WebScraper.fetchDocument(SCRAPED_WEBSITES.get(i));
                     FileUtils.writeStringToFile(f, doc.outerHtml(), "UTF-8");
-                    logger.debug("Fetched and cached document for URL: {}", SCRAPED_WEBSITES.get(i));
                 }
             } catch (IOException e) {
-                logger.error("Error fetching or writing document for URL: {}. Exception: {}", SCRAPED_WEBSITES.get(i), e.getMessage());
                 continue;
             }
 
             List<String> mainHeaders = WebScraper.getMainFieldNames(doc);
             if (mainHeaders.size() < 2) {
-                logger.warn("Not enough main headers found in the document for URL: {}", SCRAPED_WEBSITES.get(i));
                 continue;
             }
             String headerKeyOriginal = mainHeaders.get(1).trim();
@@ -154,17 +148,12 @@ public class UniversityService {
 
                 universityTop.setUniversityData(cachedList);
                 universityTops.add(universityTop);
-                logger.info("Loaded cached data for field: {}", headerKeyOriginal);
                 continue;
             }
 
             List<String> subHeaders = WebScraper.getSubFieldNames(doc);
             List<UniversityProgram> program_data = WebScraper.getUniversityProgramData(doc);
             List<SubjectPoints> subject_points = WebScraper.getSubjectPointsData(doc);
-
-            for (UniversityProgram data : program_data) {
-                logger.debug("Processing program data: {}", data.toString());
-            }
 
             for (int j = 0; j < subHeaders.size(); j++) {
                 List<UniversityProgram> program = new ArrayList<>();
@@ -179,7 +168,6 @@ public class UniversityService {
                         points.add(subjectPoint);
                     }
                 }
-                logger.info("programData, {}", subHeaders.get(j));
                 String subHeader = subHeaders.get(j);
                 if(subHeader.equals("Kiintiöt ja kynnysehdot")) {
                     subHeader = "Erityispedagogiikka ja erityisopettaja sekä opinto-ohjaaja ja uraohjaaja";
@@ -193,9 +181,7 @@ public class UniversityService {
 
             universityTop.setUniversityData(universityPoints);
             universityTops.add(universityTop);
-            logger.info("headerKey, {}", headerKey);
             cache.put(headerKey, universityPoints);
-            logger.info("Processed and cached data for field: {}", headerKeyOriginal);
 
             try {
                 if (!doc_exists) {
@@ -208,7 +194,6 @@ public class UniversityService {
             }
         }
         pointsCache.save();
-        logger.info("Fetched and processed University Requirements data successfully.");
         return universityTops;
     }
 
@@ -251,7 +236,6 @@ public class UniversityService {
                 for(var universityData : scraped.getUniversityData()) {
                     for(var group : universityData.getGroup()) {
                         if(group.getUniversity().toLowerCase().equals(uniName)) {
-                            logger.info("Match: {} and {}", group.getUniversity(), uniName);
                             RelevantData data = new RelevantData(universityData.getFieldsPoints(), universityData.getField());
                             scraped_points.put(group.getProgram(), data);
                             break;
@@ -270,9 +254,6 @@ public class UniversityService {
 
                     if(field.getName().contains("DIA-yhteisvalinta")) {
                         var university_engineer_fields = EngineerFields.UNIVERSITY_FIELDS_MAP.get(university.getName());
-                        if(university_engineer_fields == null) {
-                            logger.error("university_engineer_fields is null {} cannot be found", university.getName());
-                        }
                         int score2 = 0;
                         String best_scored_field = null;
                         for(String engineer_field : university_engineer_fields) {
@@ -297,10 +278,7 @@ public class UniversityService {
                         break;
                     }
 
-                    logger.info("Heuristic score for {}: {} is {}", entry.getKey(), field.getName(), score);
-
                     if(score >= HEURISTIC_THRESHOLD) {
-                        logger.info("HEURISTIC good for: University {}, with the program {}", university.getName(), field.getName());
                         CombinedUniversityData combinedUniversityData = new CombinedUniversityData();
                         combinedUniversityData.setUniversityName(university.getName());
                         combinedUniversityData.setFieldName(field.getName());

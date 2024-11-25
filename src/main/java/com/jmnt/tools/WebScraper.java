@@ -218,9 +218,6 @@ public class WebScraper {
                     Matcher gradeMatcher = gradePattern.matcher(part);
 
                     boolean found = gradeMatcher.find();
-                    System.out.println("Part: " + part);
-                    System.out.println("Grade found: " + found);
-                    System.out.println("same_grade: " + same_grade);
 
                     if (found) {
                         String matchedGrade = gradeMatcher.group(1);
@@ -271,7 +268,6 @@ public class WebScraper {
                     if(child.tagName().equalsIgnoreCase("h4") && child.text().contains("hakijalle")) {
                         word = extractNumberWord(child.text());
                         number = convertToNumber(word);
-                        System.out.println(number);
                     }
                     if (child.tagName().equalsIgnoreCase("table")) {
                         SubjectPoints parsedTable = parseTable(child, currentIndex, number);
@@ -291,7 +287,6 @@ public class WebScraper {
 
         Elements headerRows = table.select("thead tr");
         if (headerRows.isEmpty()) {
-            System.err.println("Warning: No header row found in table.");
             return subjectPoints;
         }
 
@@ -305,7 +300,6 @@ public class WebScraper {
             if (gradeText.length() == 1 && GRADES.contains(gradeText.charAt(0))) {
                 grades.add(gradeText.charAt(0));
             } else {
-                System.err.println("Warning: Unexpected grade header: " + gradeText);
                 grades.add('?');
             }
         }
@@ -315,7 +309,6 @@ public class WebScraper {
             Elements cells = row.select("td");
 
             if (cells.size() < grades.size() + 1) {
-                System.err.println("Warning: Row has insufficient number of cells: " + row.text());
                 continue;
             }
 
@@ -331,7 +324,6 @@ public class WebScraper {
                 try {
                     points = Float.parseFloat(pointsStr);
                 } catch (NumberFormatException e) {
-                    System.err.println("Error parsing points for subject '" + subject + "', grade '" + grade + "': " + pointsStr);
                     continue;
                 }
 

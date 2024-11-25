@@ -5,6 +5,7 @@ import AdmissionChart from "../../data/AdmissionDataGraph.jsx";
 import {AdmissionData} from "../../data/AdmissionData.jsx";
 import './SidePanel.css';
 import HsChart from "../../data/HsDataGraph.jsx";
+import HsStudentInfo from "../../data/HsStudentInfo.jsx";
 
 const SidePanel=({school, closePanel, type,isOpen}) =>{
     const [data, setData] = useState(null);
@@ -93,17 +94,18 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
     }
 
     if (type === "high_school") {
-        return (<div className={`side-panel ${isOpen ? "side-panel-open" : ""}`}>
-                <button onClick={()=>{
-                    closePanel();
-                }} className="close-panel-button">
+        return (
+            <div className={`side-panel ${isOpen ? "side-panel-open" : ""}`}>
+                <button onClick={() => closePanel()} className="close-panel-button">
                     &times; Close
                 </button>
                 <h2>{school}</h2>
-                <HsChart school={school} year={2024}/>
+                <HsStudentInfo school={school} year={2024} />
+                <HsChart school={school} year={2024} />
             </div>
-        )
-    } else {
+        );
+    }
+    else {
         useEffect(() => {
             const fetchSchoolData = async () => {
                 try {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Button from 'react-bootstrap/Button';
 
 const GradeFilter = () => {
     const subjects = [
@@ -91,7 +92,6 @@ const GradeFilter = () => {
             }
         }
         math.forEach(mathType => delete grades[mathType]);
-
         const foreignLanguages = ['Kieli, pitkä', 'Kieli, keskipitkä', 'Kieli, lyhyt'];
         for (const language of foreignLanguages) {
             const grade = grades[language];
@@ -110,11 +110,12 @@ const GradeFilter = () => {
                     : 0;
             })
             .sort((a, b) => b - a);
-
         totalPoints += (reaaliPoints[0] || 0) + (reaaliPoints[1] || 0);
         reaaliaineet.forEach(subject => delete grades[subject]);
 
-
+        if(totalPoints >= 198) {
+            totalPoints = 198;
+        }
 
         return totalPoints;
     };
@@ -168,34 +169,47 @@ const GradeFilter = () => {
             grades: selectedGrades,
         };
         console.log('Submission Data:', submissionData);
+        console.log("totalpoints: ", totalPoints)
     };
+
+    const handleReset = (e) => {
+        e.preventDefault();
+
+        const resetGrades = subjects.reduce((acc, subject) => {
+            acc[subject] = '';
+            return acc;
+        }, {});
+        setSelectedGrades(resetGrades);
+
+        setSelectedField('');
+    }
 
     return (
         <div>
             <h2>Grades</h2>
             <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '20px'}}>
-                    <label htmlFor="field" style={{ marginRight: '0px' }}>
+                <div style={{marginBottom: '20px'}}>
+                    <label htmlFor="field" style={{marginRight: '0px'}}>
                         Select Field:
                     </label>
                     <select
-                            style={{marginLeft: '10px', width: '50%'}}
-                            id="field"
-                            value={selectedField}
-                            onChange={handleFieldChange}
-                        >
-                            <option value="">-</option>
-                            {fields.map((field, index) => (
-                                <option key={index} value={field}>
-                                    {field}
-                                </option>
-                            ))}
+                        style={{marginLeft: '10px', width: '50%'}}
+                        id="field"
+                        value={selectedField}
+                        onChange={handleFieldChange}
+                    >
+                        <option value="">-</option>
+                        {fields.map((field, index) => (
+                            <option key={index} value={field}>
+                                {field}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
                 {subjects.map(subject => (
-                    <div key={subject} style={{marginBottom: '10px' }}>
-                        <label htmlFor={subject} style={{ marginRight: '10px' }}>
+                    <div key={subject} style={{marginBottom: '10px'}}>
+                        <label htmlFor={subject} style={{marginRight: '10px'}}>
                             {subject}:
                         </label>
                         <select
@@ -214,9 +228,15 @@ const GradeFilter = () => {
                         </select>
                     </div>
                 ))}
-
+                <Button
+                    variant="primary"
+                    onClick={handleReset}
+                    size="lg">
+                    Reset
+                </Button>
                 <button type="submit">Submit</button>
             </form>
+
         </div>
     );
 };

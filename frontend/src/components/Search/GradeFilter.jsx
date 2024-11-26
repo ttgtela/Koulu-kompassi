@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 
-const GradeFilter = () => {
+const GradeFilter = ({ onFieldSelected }) => {
     const subjects = [
         'Äidinkieli',
         'Biologia',
@@ -169,7 +169,11 @@ const GradeFilter = () => {
             grades: selectedGrades,
         };
         console.log('Submission Data:', submissionData);
-        console.log("totalpoints: ", totalPoints)
+        console.log("Total Points: ", totalPoints);
+
+        if (onFieldSelected) {
+            onFieldSelected(selectedField);
+        }
     };
 
     const handleReset = (e) => {
@@ -182,6 +186,10 @@ const GradeFilter = () => {
         setSelectedGrades(resetGrades);
 
         setSelectedField('');
+
+        if (onFieldSelected) {
+            onFieldSelected('');
+        }
     }
 
     return (

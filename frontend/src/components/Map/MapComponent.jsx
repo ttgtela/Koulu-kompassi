@@ -102,6 +102,10 @@ const MapComponent = ({type}) => {
     const [availableTypes, setAvailableTypes] = React.useState([]);
     const [favourites, setFavourites] = React.useState([]);
 
+    const [selectedField, setSelectedField] = React.useState('');
+    const [fieldData, setFieldData] = React.useState([]);
+    const [filteredUniversities, setFilteredUniversities] = React.useState([]);
+
     useEffect(() => {
         const fetchData = async () => {
             const data = await getData(type);
@@ -137,8 +141,39 @@ const MapComponent = ({type}) => {
         fetchData();
     }, [type]);
 
+    useEffect(() => {
+        const fetchFieldData = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/wherestudy');
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                }
+                const data = await response.json();
+                setFieldData(data);
+            } catch (err) {
+                console.error('Error fetching field data:', err);
+            }
+        };
+        fetchFieldData();
+    }, []);
+
+    useEffect(() => {
+        if (selectedField) {
+            const field = fieldData.find(f => f.field === selectedField);
+            if (field) {
+                setFilteredUniversities(field.universities);
+            } else {
+                setFilteredUniversities([]);
+            }
+        } else {
+            setFilteredUniversities([]);
+        }
+    }, [selectedField, fieldData]);
+
     const filteredMarkers = filteredData.filter((campus) =>
-        selectedTypes.includes(campus.type));
+        selectedTypes.includes(campus.type) &&
+        (filteredUniversities.length === 0 || filteredUniversities.includes(campus.schoolName))
+    );
 
     const togglePanel = (chosenSchool, isCenteringNeeded) => {
         closePanel();
@@ -185,6 +220,10 @@ const MapComponent = ({type}) => {
         }
     };
 
+    const handleFieldSelected = (field) => {
+        setSelectedField(field);
+    };
+
     return (
         <>
             <div className="map-container" style={{display: 'flex'}}>
@@ -218,7 +257,7 @@ const MapComponent = ({type}) => {
                         </div>
                     ))
                     }
-                    <GradeFilter/>
+                    <GradeFilter onFieldSelected={handleFieldSelected}/>
 
                     <Button
                         variant="primary"

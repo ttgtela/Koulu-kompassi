@@ -6,6 +6,7 @@ import {AdmissionData} from "../../data/AdmissionData.jsx";
 import './SidePanel.css';
 import HsChart from "../../data/HsDataGraph.jsx";
 import HsStudentInfo from "../../data/HsStudentInfo.jsx";
+import {HsExam} from "../../data/HsExam.jsx";
 
 const SidePanel=({school, closePanel, type,isOpen}) =>{
     const [data, setData] = useState(null);
@@ -17,6 +18,8 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
     const [isGraphOpen, setIsGraphOpen] = useState(false);
     const [selectedMethod, setSelectedMethod] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [chartData, setChartData] = useState([]);
+    const [selectedYear, setSelectedYear] = useState(2024);
 
 
     const toggleFieldData = (field) => {
@@ -93,6 +96,35 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
             </div>);
     }
 
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await HsExam(school, selectedYear);
+            let transformedData;
+            if (result) {
+                if (Object.keys(result).length===1){
+                    transformedData=null
+                    setChartData(transformedData);
+                }
+                else {
+                    transformedData = Object.keys(result).map(grade => ({
+                        grade: grade,
+                        numberOfGrades: result[grade]
+                    }));
+                    setChartData(transformedData);
+
+                }
+            }
+        };
+        fetchData();
+    }, [school, selectedYear]);
+
+
+    const handleYearChange = (event) => {
+        const newYear = Number(event.target.value);
+        console.log("Selected year:", newYear);
+        setSelectedYear(newYear);
+    };
+
     if (type === "high_school") {
         return (
             <div className={`side-panel ${isOpen ? "side-panel-open" : ""}`}>
@@ -100,12 +132,28 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
                     &times; Close
                 </button>
                 <h2>{school}</h2>
-                <HsStudentInfo school={school} year={2024} />
-                <HsChart school={school} year={2024} />
+                <HsStudentInfo school={school} year={selectedYear}/>
+                <HsChart data={chartData}/>
+                <div className="year-selector">
+                    <label htmlFor="year">Select Year: </label>
+                    <select
+                        id="year"
+                        value={selectedYear}
+                        onChange={handleYearChange}
+                    >
+                        <option value={2017}>2017</option>
+                        <option value={2018}>2018</option>
+                        <option value={2019}>2019</option>
+                        <option value={2020}>2020</option>
+                        <option value={2021}>2021</option>
+                        <option value={2022}>2022</option>
+                        <option value={2023}>2023</option>
+                        <option value={2024}>2024</option>
+                    </select>
+                </div>
             </div>
         );
-    }
-    else {
+    } else {
         useEffect(() => {
             const fetchSchoolData = async () => {
                 try {

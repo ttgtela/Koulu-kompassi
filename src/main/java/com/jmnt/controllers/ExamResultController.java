@@ -3,7 +3,6 @@ package com.jmnt.controllers;
 import com.jmnt.data.ExamResultCaller;
 import com.jmnt.data.ExamResults;
 import com.jmnt.data.SchoolStats;
-import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,13 +18,11 @@ public class ExamResultController {
 
     private final ExamResultCaller caller;
     private final ExamResults[] results;
-    private Map<String, SchoolStats> statsMap;
 
     @Autowired
     public ExamResultController(ExamResultCaller caller) {
         this.caller = caller;
         this.results = caller.searchExams();
-        this.statsMap = new HashMap<>();
     }
 
     private static class CustomGradeComparator implements Comparator<String> {
@@ -52,10 +49,6 @@ public class ExamResultController {
 
     public SchoolStats getStats(String school, String year){
 
-        if (statsMap.containsKey(school)){
-            return statsMap.get(school);
-        }
-
         ExamResults[] results = caller.searchStats(school, year);
         int numberOfStudents = caller.searchStudents(school, year);
         float numberOfExams = 0;
@@ -77,7 +70,6 @@ public class ExamResultController {
         stats.setStudentCount(numberOfStudents);
         stats.setAverageGrade(average);
         stats.setExamGrades(grades);
-        statsMap.put(school, stats);
         return stats;
     }
 
@@ -85,6 +77,7 @@ public class ExamResultController {
     @GetMapping("/api/stats/{school}/{year}/examgrades")
     public ResponseEntity<Map<String, Integer>> getExamGrades(@PathVariable String school, @PathVariable String year){
         SchoolStats stats = getStats(school, year);
+        System.out.println("API call year:" + year);
         return ResponseEntity.ok(stats.getExamGrades());
     }
 

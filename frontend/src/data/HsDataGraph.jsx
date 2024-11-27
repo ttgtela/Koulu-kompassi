@@ -4,33 +4,12 @@ import {
 } from 'recharts';
 import { HsExam } from './HsExam.jsx';
 
-const HsChart = ({ school, year }) => {
-    const [data, setData] = useState([]);
+const HsChart = ({ data }) => {
 
     const isDataEmpty = () => !data || data.length === 0;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const result = await HsExam(school, year);
-            let transformedData;
-            if (result) {
-                if (Object.keys(result).length===1){
-                    transformedData=null
-                    setData(transformedData);
-                }
-                else {
-                    transformedData = Object.keys(result).map(grade => ({
-                        grade: grade,
-                        numberOfGrades: result[grade]
-                    }));
-                    setData(transformedData);
-                }
-            }
-        };
-        fetchData();
-    }, [school, year]);
     if (isDataEmpty()){
-        return null;
+        return <p>No data available for the selected year.</p>;
     }
     else {
 

@@ -8,7 +8,6 @@ import TypeFilter from "../Search/TypeFilter.jsx";
 import './MapComponent.css';
 import {useNavigate} from "react-router-dom";
 import {Button} from "react-bootstrap";
-import UniData from "../../data/UniData.jsx";
 import SidePanel from "../Sidepanel/SidePanel.jsx";
 import starImage from "../../assets/star.png";
 import emptyStarImage from "../../assets/emptyStar.png";
@@ -105,6 +104,7 @@ const MapComponent = ({type}) => {
     const [selectedField, setSelectedField] = React.useState('');
     const [fieldData, setFieldData] = React.useState([]);
     const [filteredUniversities, setFilteredUniversities] = React.useState([]);
+    const [totalPointsUni, setTotalPointsUni] = React.useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -175,7 +175,7 @@ const MapComponent = ({type}) => {
         (filteredUniversities.length === 0 || filteredUniversities.includes(campus.schoolName))
     );
 
-    const togglePanel = (chosenSchool, isCenteringNeeded) => {
+    const togglePanel = async (chosenSchool, isCenteringNeeded) => {
         closePanel();
 
         if (isCenteringNeeded) {
@@ -257,7 +257,13 @@ const MapComponent = ({type}) => {
                         </div>
                     ))
                     }
-                    <GradeFilter onFieldSelected={handleFieldSelected}/>
+                    <GradeFilter onFieldSelected={handleFieldSelected} setTotalPointsForUniversity={setTotalPointsUni}/>
+                    { totalPointsUni !==0 ? (
+                        <p>Total points for university : {totalPointsUni}</p>
+                    ) :
+                        (
+                            <div></div>
+                    )}
 
                     <Button
                         variant="primary"
@@ -297,7 +303,8 @@ const MapComponent = ({type}) => {
                     school={selectedSchool}
                     closePanel={closePanel}
                     type={type}
-                    isOpen={isPanelOpen}/>
+                    isOpen={isPanelOpen}
+                    uniPoints={totalPointsUni}/>
             )}
         </>
     );

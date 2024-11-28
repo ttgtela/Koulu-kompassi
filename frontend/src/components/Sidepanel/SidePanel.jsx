@@ -8,7 +8,7 @@ import HsChart from "../../data/HsDataGraph.jsx";
 import HsStudentInfo from "../../data/HsStudentInfo.jsx";
 import {HsExam} from "../../data/HsExam.jsx";
 
-const SidePanel=({school, closePanel, type,isOpen}) =>{
+const SidePanel=({school, closePanel, type,isOpen,uniPoints}) =>{
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -51,6 +51,49 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
         }
 
     };
+
+    const filterFields = (fields) => {
+        const filteredFields = [];
+        const fieldsToDelete = new Set();
+
+        if (uniPoints===0 || type==="university"){
+            return fields;
+        }
+
+
+        fields.forEach((field) => {
+            const methods = field.admissionMethods.map((method) => method.name);
+            field.admissionMethods.forEach((method) => {
+                if (
+                    (method.name === "Todistusvalinta (YO)" ||
+                        (method.name === "Todistusvalinta" &&
+                            methods.includes("Todistusvalinta (AMM)"))) &&
+                    method.requiredPoints > uniPoints &&
+                    uniPoints !== 0
+                ) {
+                    fieldsToDelete.add(field.name);
+                }
+
+                if (
+                    (!methods.includes("Todistusvalinta") &&
+                        !methods.includes("Todistusvalinta (YO)") &&
+                        uniPoints !== 0) ||
+                    (methods.length === 0 && uniPoints !== 0)
+                ) {
+                    fieldsToDelete.add(field.name);
+                }
+            });
+        });
+
+        fields.forEach((field) => {
+            if (!fieldsToDelete.has(field.name)) {
+                filteredFields.push(field);
+            }
+        });
+
+        return filteredFields;
+    };
+
 
 
     function FieldData({field,closeFieldData}){
@@ -158,8 +201,12 @@ const SidePanel=({school, closePanel, type,isOpen}) =>{
             const fetchSchoolData = async () => {
                 try {
                     setLoading(true);
-                    const result = await UniData(school); // Fetch school data based on name
-                    setData(result);
+                    const result = await UniData(school);
+                    const filteredData = {
+                        ...result,
+                        fields: filterFields(result.fields || []),
+                    };
+                    setData(filteredData);
                 } catch (err) {
                     setError("Error fetching school data");
                 } finally {

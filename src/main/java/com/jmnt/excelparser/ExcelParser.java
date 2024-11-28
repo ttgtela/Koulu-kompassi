@@ -62,7 +62,7 @@ public class ExcelParser {
                                 }
                                 break;
                             case NUMERIC:
-                                if (cell.getCellStyle().getDataFormatString().equals("#,##0.00")) {
+                                if (cell.getCellStyle().getDataFormatString().equals("#,##0.00") && cell.getColumnIndex()==1) {
                                     if (Double.valueOf(cell.getNumericCellValue()) != null &&
                                             !universities.getLast().getFields().getLast().getAdmissionMethods().isEmpty()) {
                                         universities.getLast().getFields().getLast()

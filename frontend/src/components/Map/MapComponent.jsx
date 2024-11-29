@@ -13,9 +13,9 @@ import starImage from "../../assets/star.png";
 import emptyStarImage from "../../assets/emptyStar.png";
 import Cookies from 'js-cookie';
 import SearchBar from "../SearchBar/SearchBar.jsx";
+import {FieldData} from "../../data/FieldData.jsx";
 import MapMarker from "./MapMarker.jsx";
-
-
+import { subjects } from "../../data/subjectList.js";
 
 const saveFavourites = (newFavourite, type) => {
     let favourites = Cookies.get(type + 'favourites');
@@ -25,7 +25,7 @@ const saveFavourites = (newFavourite, type) => {
         favourites = [];
     }
 
-    if (favourites.length > 5) {
+    if (favourites.length > 4) {
         favourites.shift();
     }
 
@@ -65,11 +65,13 @@ const MapComponent = ({type}) => {
     const [selectedTypes, setSelectedTypes] = React.useState([]);
     const [availableTypes, setAvailableTypes] = React.useState([]);
     const [favourites, setFavourites] = React.useState([]);
-
     const [selectedField, setSelectedField] = React.useState('');
     const [fieldData, setFieldData] = React.useState([]);
     const [filteredUniversities, setFilteredUniversities] = React.useState([]);
     const [totalPointsUni, setTotalPointsUni] = React.useState(0);
+    const [isPopupOpen, setIsPopupOpen] = React.useState(false);
+    const [selectedFieldOfStudy, setSelectedFieldOfStudy] = React.useState('');
+    const [fields, setFields] = React.useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -185,9 +187,32 @@ const MapComponent = ({type}) => {
         }
     };
 
-    const handleFieldSelected = (field) => {
-        setSelectedField(field);
+    const togglePopupOpen = () => {
+        setIsPopupOpen((prev) => !prev);
     };
+
+    const handleFieldChange = (e) => {
+        setSelectedFieldOfStudy(e.target.value);
+        setSelectedField(e.target.value);
+    };
+
+    useEffect(() => {
+        const fetchFields = async () => {
+            const fieldList = await FieldData(); // Call the async function
+            if (fieldList) {
+                setFields(fieldList); // Update the state with the fetched fields
+            }
+        };
+        fetchFields();
+    }, []);
+
+
+    const [selectedGrades, setSelectedGrades] = useState(
+        subjects.reduce((acc, subject) => {
+            acc[subject] = '';
+            return acc;
+        }, {})
+    );
 
     return (
         <>
@@ -222,22 +247,58 @@ const MapComponent = ({type}) => {
                         </div>
                     ))
                     }
-                    <GradeFilter onFieldSelected={handleFieldSelected} setTotalPointsForUniversity={setTotalPointsUni}/>
-                    { totalPointsUni !==0 ? (
-                        <p>Total points for university : {totalPointsUni}</p>
-                    ) :
-                        (
-                            <div></div>
-                    )}
 
-                    <Button
-                        variant="primary"
-                        size="lg"
-                        onClick={() => navigate("/")}
-                        style={{marginTop: "20px"}}
-                    >
-                        Back to Title Screen
-                    </Button>{' '}
+                    {type === "college" ? (
+                        <div>
+                            <label htmlFor="field">
+                                Select Field:
+                            </label>
+
+                            <select
+                                style={{marginLeft: '10px', marginTop: '20px', width: '50%'}}
+                                id="field"
+                                value={selectedFieldOfStudy}
+                                onChange={handleFieldChange}
+                            >
+                                <option value="">-</option>
+                                {fields.map((field, index) => (
+                                    <option key={index} value={field}>
+                                        {field}
+                                    </option>
+                                ))}
+                            </select>
+                            <button onClick={togglePopupOpen} style={{marginTop: "20px"}}> Open Grade Filter</button>
+                            {isPopupOpen && (
+                                <div className="popup">
+                                    <button className="popup-close-button" onClick={togglePopupOpen}>
+                                        Close
+                                    </button>
+                                    <GradeFilter
+                                        setTotalPointsForUniversity={setTotalPointsUni}
+                                        togglePopup={togglePopupOpen}
+                                        selectedGrades={selectedGrades}
+                                        setSelectedGrades={setSelectedGrades}
+                                    />
+                                </div>
+                            )}
+
+                            {totalPointsUni !== 0 ? (
+                                    <p>Total points for university : {totalPointsUni}</p>
+                                ) :
+                                (
+                                    <div></div>
+                                )}
+                        </div>
+                    ) : (<div></div>)}
+
+                        <Button
+                            variant="primary"
+                            size="lg"
+                            onClick={() => navigate("/")}
+                            style={{marginTop: "20px"}}
+                        >
+                            Back to Title Screen
+                        </Button>{' '}
 
                 </div>
 

@@ -8,7 +8,7 @@ import HsChart from "../../data/HsDataGraph.jsx";
 import HsStudentInfo from "../../data/HsStudentInfo.jsx";
 import {HsExam} from "../../data/HsExam.jsx";
 
-const SidePanel=({school, closePanel, type,isOpen,uniPoints}) =>{
+const SidePanel=({school, closePanel, type, isOpen, uniPoints}) =>{
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

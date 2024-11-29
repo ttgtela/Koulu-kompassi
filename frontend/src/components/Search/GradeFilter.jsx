@@ -1,26 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
+import { subjects } from "../../data/subjectList.js";
 
-const GradeFilter = ({ onFieldSelected, setTotalPointsForUniversity }) => {
-    const subjects = [
-        'Äidinkieli',
-        'Biologia',
-        'Filosofia',
-        'Fysiikka',
-        'Historia',
-        'Kemia',
-        'Kieli, pitkä',
-        'Kieli, keskipitkä',
-        'Kieli, lyhyt',
-        'Maantiede',
-        'Matematiikka, pitkä',
-        'Matematiikka, lyhyt',
-        'Psykologia',
-        'Terveystieto',
-        'Uskonto',
-        'Elämänkatsomusoppi',
-        'Yhteiskuntaoppi',
-    ];
+const GradeFilter = ({ setTotalPointsForUniversity, togglePopup, selectedGrades, setSelectedGrades }) => {
 
     const gradeOptions = [
         { value: '', label: '-' },
@@ -121,35 +103,6 @@ const GradeFilter = ({ onFieldSelected, setTotalPointsForUniversity }) => {
     };
 
 
-
-    const [selectedGrades, setSelectedGrades] = useState(
-        subjects.reduce((acc, subject) => {
-            acc[subject] = '';
-            return acc;
-        }, {})
-    );
-
-    const [fields, setFields] = useState([]);
-    const [selectedField, setSelectedField] = useState('');
-
-    useEffect(() => {
-        const fetchFields = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/api/points');
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status} ${response.statusText}`);
-                }
-                const data = await response.json();
-                const fieldNames = data.map(item => item.field);
-                setFields(fieldNames);
-            } catch (err) {
-                console.error('Error fetching fields:', err);
-            }
-        };
-
-        fetchFields();
-    }, []);
-
     const handleGradeChange = (subject, value) => {
         setSelectedGrades(prevGrades => ({
             ...prevGrades,
@@ -157,22 +110,15 @@ const GradeFilter = ({ onFieldSelected, setTotalPointsForUniversity }) => {
         }));
     };
 
-    const handleFieldChange = (e) => {
-        setSelectedField(e.target.value);
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         calculateTotalPoints();
         const submissionData = {
-            selectedField,
             grades: selectedGrades,
         };
         console.log('Submission Data:', submissionData);
 
-        if (onFieldSelected) {
-            onFieldSelected(selectedField);
-        }
+        togglePopup();
     };
 
     const handleReset = (e) => {
@@ -183,37 +129,12 @@ const GradeFilter = ({ onFieldSelected, setTotalPointsForUniversity }) => {
             return acc;
         }, {});
         setSelectedGrades(resetGrades);
-
-        setSelectedField('');
-
-        if (onFieldSelected) {
-            onFieldSelected('');
-        }
     }
 
     return (
         <div>
             <h2>Grades</h2>
             <form onSubmit={handleSubmit}>
-                <div style={{marginBottom: '20px'}}>
-                    <label htmlFor="field" style={{marginRight: '0px'}}>
-                        Select Field:
-                    </label>
-                    <select
-                        style={{marginLeft: '10px', width: '50%'}}
-                        id="field"
-                        value={selectedField}
-                        onChange={handleFieldChange}
-                    >
-                        <option value="">-</option>
-                        {fields.map((field, index) => (
-                            <option key={index} value={field}>
-                                {field}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
                 {subjects.map(subject => (
                     <div key={subject} style={{marginBottom: '10px'}}>
                         <label htmlFor={subject} style={{marginRight: '10px'}}>

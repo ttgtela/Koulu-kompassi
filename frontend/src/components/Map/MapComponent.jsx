@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import getData from '../../data/NameAndCoord.jsx';
 import RatingFilter from '../Search/RatingFilter.jsx';
+import {CombinedData} from "../../data/CombinedData.jsx";
 import GradeFilter from '../Search/GradeFilter.jsx';
 import TypeFilter from "../Search/TypeFilter.jsx";
 import './MapComponent.css';
@@ -72,6 +73,7 @@ const MapComponent = ({type}) => {
     const [isPopupOpen, setIsPopupOpen] = React.useState(false);
     const [selectedFieldOfStudy, setSelectedFieldOfStudy] = React.useState('');
     const [fields, setFields] = React.useState([]);
+    const [combinedData, setCombinedData] = React.useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -111,7 +113,7 @@ const MapComponent = ({type}) => {
     useEffect(() => {
         const fetchFieldData = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/wherestudy');
+                const response = await fetch('http://localhost:8080/api/wherestudyspecific');
                 if (!response.ok) {
                     throw new Error(`Error: ${response.status} ${response.statusText}`);
                 }
@@ -136,6 +138,18 @@ const MapComponent = ({type}) => {
             setFilteredUniversities([]);
         }
     }, [selectedField, fieldData]);
+
+    const fetchCombined = async (field) => {
+        try {
+            const data = await CombinedData(field);
+            console.log(data);
+            if (data) {
+                setCombinedData(data);
+            }
+        } catch (error) {
+            console.error("Error fetching combined data:", error);
+        }
+    };
 
     const filteredMarkers = filteredData.filter((campus) =>
         selectedTypes.includes(campus.type) &&
@@ -193,6 +207,7 @@ const MapComponent = ({type}) => {
 
     const handleFieldChange = (e) => {
         setSelectedFieldOfStudy(e.target.value);
+        fetchCombined(e.target.value);
         setSelectedField(e.target.value);
     };
 
@@ -278,12 +293,13 @@ const MapComponent = ({type}) => {
                                         togglePopup={togglePopupOpen}
                                         selectedGrades={selectedGrades}
                                         setSelectedGrades={setSelectedGrades}
+                                        setCombinedData={setCombinedData}
                                     />
                                 </div>
                             )}
 
                             {totalPointsUni !== 0 ? (
-                                    <p>Total points for university : {totalPointsUni}</p>
+                                    <p>Total points for UAS : {totalPointsUni}</p>
                                 ) :
                                 (
                                     <div></div>

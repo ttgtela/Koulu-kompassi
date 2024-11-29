@@ -110,6 +110,55 @@ public class UniversityService {
         return whereStudyList;
     }
 
+    public List<WhereStudy> getWhereStudyProgrammes() {
+        ParsedUniversityContext data = ParsedUniversityContext.getInstance();
+        List<UniversityTopField> scraped = data.getScrapedData();
+
+        List<WhereStudy> whereStudyList = new ArrayList<>();
+
+        for(UniversityTopField field : scraped) {
+            for(UniversityPoints points : field.getUniversityData()) {
+                String pointfield = points.getField();
+
+                // special case for engineering fields
+                if(pointfield.equals("Diplomi-insinöörikoulutus")) {
+                    WhereStudy whereStudy = new WhereStudy();
+                    for(WhereStudy stud : whereStudyList) {
+                        if(!stud.getField().equals(pointfield)) {
+                            whereStudy.setField("Diplomi-insinööri- ja arkkitehtikoulutus");
+                            for (Map.Entry<String,List<String>> entry : EngineerFields.UNIVERSITY_FIELDS_MAP.entrySet()) {
+                                whereStudy.getUniversities().add(entry.getKey());
+                            }
+                            whereStudyList.add(whereStudy);
+                            break;
+                        }
+                    }
+                }
+
+                for(UniversityProgram program : points.getGroup()) {
+                    String univ = program.getUniversity();
+                    Boolean found = false;
+
+                    for(WhereStudy stud : whereStudyList) {
+                        if(stud.getField().equals(pointfield)) {
+                            stud.getUniversities().add(univ);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found) {
+                        WhereStudy whereStudy = new WhereStudy();
+                        whereStudy.setField(pointfield);
+                        whereStudy.getUniversities().add(univ);
+                        whereStudyList.add(whereStudy);
+                    }
+                }
+            }
+        }
+
+        return whereStudyList;
+    }
+
 
     /**
      * Retrieves the list of universities for a specified year from the parsed data context.
@@ -226,9 +275,10 @@ public class UniversityService {
     }
 
     static class RelevantData {
-        RelevantData(List<SubjectPoints> subject_points, String field) {
+        RelevantData(List<SubjectPoints> subject_points, String field, String category) {
             this.subject_points_ = subject_points;
             this.field_ = field;
+            this.poinst_category_ = category;
         }
 
         public List<SubjectPoints> getSubject_points_() {
@@ -241,6 +291,12 @@ public class UniversityService {
 
         List<SubjectPoints> subject_points_;
         String field_;
+
+        public String getPoinst_category_() {
+            return poinst_category_;
+        }
+
+        String poinst_category_;
     }
 
 
@@ -271,7 +327,7 @@ public class UniversityService {
                 for(var universityData : scraped.getUniversityData()) {
                     for(var group : universityData.getGroup()) {
                         if(group.getUniversity().toLowerCase().equals(uniName)) {
-                            RelevantData data = new RelevantData(universityData.getFieldsPoints(), universityData.getField());
+                            RelevantData data = new RelevantData(universityData.getFieldsPoints(), universityData.getField(), scraped.getField());
                             scraped_points.put(group.getProgram(), data);
                             break;
                         }
@@ -306,6 +362,7 @@ public class UniversityService {
                             combinedUniversityData.setTopField("Diplomi-insinööri- ja arkkitehtikoulutus");
                             combinedUniversityData.setScrapedProgramName(best_scored_field);
                             combinedUniversityData.setAdmissionMethods(field.getAdmissionMethods());
+                            combinedUniversityData.setPointsFieldName(entry.getValue().getPoinst_category_());
 
                             combined.add(combinedUniversityData);
                         }
@@ -321,6 +378,7 @@ public class UniversityService {
                         combinedUniversityData.setTopField(entry.getValue().getField_());
                         combinedUniversityData.setScrapedProgramName(entry.getKey());
                         combinedUniversityData.setAdmissionMethods(field.getAdmissionMethods());
+                        combinedUniversityData.setPointsFieldName(entry.getValue().getPoinst_category_());
 
                         combined.add(combinedUniversityData);
                     }

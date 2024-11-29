@@ -32,6 +32,16 @@ public class CombinedUniversityData {
 
     private String topField;
 
+    public String getPointsFieldName() {
+        return pointsFieldName;
+    }
+
+    public void setPointsFieldName(String pointsFieldName) {
+        this.pointsFieldName = pointsFieldName;
+    }
+
+    private String pointsFieldName;
+
 
     /**
      * Retrieves the name of the scraped program.

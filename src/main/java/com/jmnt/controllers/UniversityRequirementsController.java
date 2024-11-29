@@ -72,4 +72,15 @@ public class UniversityRequirementsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/api/wherestudyspecific")
+    public ResponseEntity<List<WhereStudy>> getWhereStudySpecificData() {
+        try {
+            List<WhereStudy> data = universityService.getWhereStudyProgrammes();
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            System.err.println("Error fetching getWhereStudySpecificData data: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

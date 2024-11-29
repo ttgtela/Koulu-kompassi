@@ -2,6 +2,11 @@ package com.jmnt.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+/**
+ * Represents a place returned by the Nominatim API (OpenStreetMap).
+ * This class contains information about a specific geographic location such as its coordinates, name, type, and bounding box.
+ */
 public class Place {
     private long place_id;
     private String licence;

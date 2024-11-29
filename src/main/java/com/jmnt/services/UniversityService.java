@@ -19,6 +19,11 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+/**
+ * Service class for handling university data, including scraping information from external sources,
+ * combining scraped data with existing data, and processing university requirements.
+ */
 @Service
 public class UniversityService {
 
@@ -66,6 +71,14 @@ public class UniversityService {
 
     private static int HEURISTIC_THRESHOLD = 15;
 
+
+    /**
+     * Retrieves a list of WhereStudy objects, each containing a field of study and the associated universities.
+     * This method processes the university data to organize it by fields of study and returns a list of relevant fields
+     * and universities.
+     *
+     * @return a list of WhereStudy objects
+     */
     public List<WhereStudy> getWhereStudy() {
         ParsedUniversityContext data = ParsedUniversityContext.getInstance();
         List<UniversityTopField> scraped = data.getScrapedData();
@@ -97,6 +110,13 @@ public class UniversityService {
         return whereStudyList;
     }
 
+
+    /**
+     * Retrieves the list of universities for a specified year from the parsed data context.
+     *
+     * @param year the year for which university data is requested
+     * @return a list of universities for the specified year, or an empty list if no data exists
+     */
     public List<University> getUniversities(int year) {
         ParsedUniversityContext data = ParsedUniversityContext.getInstance();
         List<University> universities = data.getUniversities().get(year);
@@ -106,6 +126,14 @@ public class UniversityService {
         return universities;
     }
 
+
+    /**
+     * Scrapes and processes university requirements data from predefined websites.
+     * This method fetches the university program data and extracts relevant information like fields,
+     * subject points, and program names.
+     *
+     * @return a list of UniversityTopField objects containing the scraped university requirements data
+     */
     public static List<UniversityTopField> getUniversityRequirements() {
         List<UniversityTopField> universityTops = new ArrayList<>();
 
@@ -215,6 +243,13 @@ public class UniversityService {
         String field_;
     }
 
+
+    /**
+     * Combines university data from Excel files with the scraped university program data.
+     * This method matches universities to their respective fields and creates a list of CombinedUniversityData objects.
+     *
+     * @return a list of CombinedUniversityData objects containing combined university and program information
+     */
     public List<CombinedUniversityData> getCombinedData() {
         List<University> excelUniversities = getUniversities(CURRENT_YEAR);
         List<CombinedUniversityData> combined = new ArrayList<>();
@@ -296,6 +331,14 @@ public class UniversityService {
         return combined;
     }
 
+
+    /**
+     * Normalizes a field name by trimming whitespace, converting to lowercase,
+     * and removing punctuation characters.
+     *
+     * @param fieldName the field name to normalize
+     * @return the normalized field name
+     */
     private static String normalizeFieldName(String fieldName) {
         if (fieldName == null) return "";
         return fieldName.trim().toLowerCase()

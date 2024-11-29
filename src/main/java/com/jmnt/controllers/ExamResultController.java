@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
+/**
+ * Controller class for handling API endpoints related to exam results and school statistics.
+ * Provides endpoints to retrieve school information, exam grades, and student grade statistics.
+ */
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 public class ExamResultController {
@@ -19,15 +23,31 @@ public class ExamResultController {
     private final ExamResultCaller caller;
     private final ExamResults[] results;
 
+    /**
+     * Constructor for the ExamResultController.
+     *
+     * @param caller the service used to fetch exam results and related data.
+     */
     @Autowired
     public ExamResultController(ExamResultCaller caller) {
         this.caller = caller;
         this.results = caller.searchExams();
     }
 
+    /**
+     * Custom comparator for sorting grades in a specific order.
+     */
     private static class CustomGradeComparator implements Comparator<String> {
         private static final List<String> gradeOrder = Arrays.asList("I", "A", "B", "C", "M", "E", "L");
 
+        /**
+         * Compares two grade codes based on a predefined order.
+         *
+         * @param name1 the first grade code.
+         * @param name2 the second grade code.
+         * @return a negative integer, zero, or a positive integer as the first grade precedes,
+         *         is equal to, or follows the second grade in the order.
+         */
         @Override
         public int compare(String name1, String name2) {
             int index1 = gradeOrder.indexOf(name1);
@@ -35,6 +55,12 @@ public class ExamResultController {
             return Integer.compare(index1, index2);
         }
     }
+
+    /**
+     * Retrieves a list of high schools from the exam results.
+     *
+     * @return a list of unique high school names.
+     */
     @CrossOrigin(origins = "http://localhost:5173/home")
     @GetMapping("/api/schools")
     public ArrayList<String> getSchools(){
@@ -47,6 +73,14 @@ public class ExamResultController {
         return schools;
     }
 
+
+    /**
+     * Calculates statistics for a given school and year.
+     *
+     * @param school the name of the school.
+     * @param year   the year for which statistics are to be calculated.
+     * @return a SchoolStats object containing exam and student statistics.
+     */
     public SchoolStats getStats(String school, String year){
 
         ExamResults[] results = caller.searchStats(school, year);
@@ -73,14 +107,29 @@ public class ExamResultController {
         return stats;
     }
 
+
+    /**
+     * Retrieves a map of exam grades for a specific school and year.
+     *
+     * @param school the name of the school.
+     * @param year   the year for which exam grades are to be retrieved.
+     * @return a ResponseEntity containing a map of grade codes to their frequencies.
+     */
     @CrossOrigin(origins = "http://localhost:5173/home")
     @GetMapping("/api/stats/{school}/{year}/examgrades")
     public ResponseEntity<Map<String, Integer>> getExamGrades(@PathVariable String school, @PathVariable String year){
         SchoolStats stats = getStats(school, year);
-        System.out.println("API call year:" + year);
         return ResponseEntity.ok(stats.getExamGrades());
     }
 
+
+    /**
+     * Retrieves student count and average grade for a specific school and year.
+     *
+     * @param school the name of the school.
+     * @param year   the year for which student grades are to be retrieved.
+     * @return a ResponseEntity containing a map with student count and average grade.
+     */
     @CrossOrigin(origins = "http://localhost:5173/home")
     @GetMapping("/api/stats/{school}/{year}/studentgrades")
     public ResponseEntity<Map<Integer, Float>> getStudentGrades(@PathVariable String school, @PathVariable String year){

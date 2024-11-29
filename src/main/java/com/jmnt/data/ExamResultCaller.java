@@ -10,6 +10,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
+
+/**
+ * A service class that interacts with the Vipunen API to fetch examination results,
+ * school statistics, and student data.
+ */
 @Service
 public class ExamResultCaller {
 
@@ -17,6 +22,10 @@ public class ExamResultCaller {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+
+    /**
+     * Constructs an instance of ExamResultCaller with a pre-configured HTTP client and JSON mapper.
+     */
     public ExamResultCaller() {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
@@ -24,7 +33,12 @@ public class ExamResultCaller {
         this.objectMapper = new ObjectMapper();
     }
 
-    
+
+    /**
+     * Fetches exam results from the Vipunen API.
+     *
+     * @return an array of ExamResults containing the exam data. Returns an empty array if the request fails.
+     */
     public ExamResults[] searchExams() {
 
         VIPUNEN_URL  = "https://api.vipunen.fi/api/resources/ytl_arvosanat/data?filter=koe%3D%3D%27%C3%84idinkieli%2C%20suomi%27%20and%20tutkintokertaKoodi%3D%3D%272021K%27%20and%20arvosana%3D%3D%27Lubenter%20approbatur%27&sort=%28%2Blukio%29&";
@@ -50,6 +64,14 @@ public class ExamResultCaller {
         }
     }
 
+
+    /**
+     * Fetches exam statistics for a specific school and year from the Vipunen API.
+     *
+     * @param schoolname the name of the school.
+     * @param year       the year of the exam session.
+     * @return an array of ExamResults containing the statistics. Returns an empty array if the request fails.
+     */
     public ExamResults[] searchStats(String schoolname, String year) {
 
         schoolname = schoolname.replaceAll(" ", "%20");
@@ -77,6 +99,14 @@ public class ExamResultCaller {
         }
     }
 
+
+    /**
+     * Fetches the number of students who took exams for a specific school and year.
+     *
+     * @param schoolname the name of the school.
+     * @param year       the year of the exam session.
+     * @return the number of students or -1 if the request fails.
+     */
     public int searchStudents(String schoolname, String year) {
 
         schoolname = schoolname.replaceAll(" ", "%20");

@@ -2,6 +2,11 @@ package com.jmnt.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+/**
+ * Represents the exam results data retrieved from the Vipunen API.
+ * This class is mapped to the JSON structure of the API response using Jackson annotations.
+ */
 public class ExamResults {
     @JsonProperty("opiskelijaKoodi")
     private int studentCode;

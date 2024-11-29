@@ -10,15 +10,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
+
+/**
+ * Controller for managing API endpoints related to location data for universities and high schools.
+ * Uses the Nominatim API to fetch geographical coordinates and associated information for educational institutions.
+ */
 @RestController
 public class NominatimApiController {
     private final NominatimApiCaller nominatimApiCaller;
 
+
+    /**
+     * Constructor for NominatimApiController.
+     *
+     * @param nominatimApiCaller the service used to query location data via the Nominatim API.
+     */
     @Autowired
     public NominatimApiController(NominatimApiCaller nominatimApiCaller) {
         this.nominatimApiCaller = nominatimApiCaller;
     }
 
+
+    /**
+     * Searches and retrieves coordinates for a list of school names.
+     *
+     * @param schoolNames a list of school names to search for.
+     * @return a map where the key is the school name, and the value is another map containing campus names and their information.
+     */
     public Map<String, Map<String, CampusInfo>> searchAllCoordinates(List<String> schoolNames) {
         Map<String, Map<String, CampusInfo>> coordMap = new HashMap<>();
 
@@ -29,7 +47,6 @@ public class NominatimApiController {
 
             if (cache != null) {
                 if (cache.containsKey(schoolName)) {
-                    //coordMap.putAll(cache.get(schoolName));
                     coordMap.put(schoolName, cache.get(schoolName));
                     continue;
                 }
@@ -69,23 +86,47 @@ public class NominatimApiController {
         return coordMap;
     }
 
+
+    /**
+     * API endpoint to retrieve coordinates for all universities.
+     *
+     * @return a map where the key is the university name, and the value is another map containing campus names and their information.
+     */
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/api/unicoordinates")
     public Map<String, Map<String, CampusInfo>> getUniCoordinates() {
         return searchAllCoordinates(UniTools.getUniversityNames());
     }
 
+
+    /**
+     * API endpoint to retrieve coordinates for all high schools.
+     *
+     * @return a map where the key is the high school name, and the value is another map containing campus names and their information.
+     */
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/api/hscoordinates")
     public Map<String, Map<String, CampusInfo>> getHsCoordinates() {
         return searchAllCoordinates(UniTools.fetchHsNames());
     }
 
+
+    /**
+     * API endpoint to retrieve a list of university names.
+     *
+     * @return a list of university names.
+     */
     @GetMapping("/names")
     public List<String> getNames() {
         return UniTools.getUniversityNames();
     }
 
+
+    /**
+     * API endpoint to retrieve a list of high school names.
+     *
+     * @return a list of high school names.
+     */
     @GetMapping("/hsnames")
     public List<String> getHsNames() {
         return UniTools.fetchHsNames();

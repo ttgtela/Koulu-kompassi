@@ -14,6 +14,12 @@ import java.util.regex.Pattern;
 
 import static com.jmnt.tools.GradeTools.GRADES;
 
+
+/**
+ * A utility class for web scraping and extracting specific data from university program and subject information web pages.
+ * It uses the JSoup library to fetch and parse HTML documents, and includes methods to extract university program data, subject points data,
+ * table data, and field names from web pages.
+ */
 public class WebScraper {
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
             + " AppleWebKit/537.36 (KHTML, like Gecko)"
@@ -43,11 +49,25 @@ public class WebScraper {
         FI_NUMBER_WORDS.put("yhdeksän", 9);
     }
 
+
+    /**
+     * Converts a Finnish number word to its corresponding integer value.
+     *
+     * @param word the Finnish word to convert
+     * @return the integer value of the word, or null if the word is not recognized
+     */
     public static Integer convertToNumber(String word) {
         if (word == null) return null;
         return FI_NUMBER_WORDS.get(word.toLowerCase());
     }
 
+
+    /**
+     * Extracts the number word from a string, if present.
+     *
+     * @param header the header string to extract the number word from
+     * @return the extracted number word or "yksi" if "parhaat" is found, or null if no match is found
+     */
     public static String extractNumberWord(String header) {
         if (header == null) return null;
         Matcher matcher = NUMBER_WORD_PATTERN.matcher(header);
@@ -60,6 +80,14 @@ public class WebScraper {
         return null;
     }
 
+
+    /**
+     * Fetches an HTML document from the given URL.
+     *
+     * @param url the URL to fetch the document from
+     * @return the parsed HTML document
+     * @throws IOException if an error occurs while fetching the document
+     */
     public static Document fetchDocument(String url) throws IOException {
         return Jsoup.connect(url)
                 .userAgent(USER_AGENT)
@@ -67,6 +95,13 @@ public class WebScraper {
                 .get();
     }
 
+
+    /**
+     * Extracts the main field names (h1 tags) from the document, filtering out forbidden words.
+     *
+     * @param doc the HTML document to extract field names from
+     * @return a list of extracted field names
+     */
     public static List<String> getMainFieldNames(Document doc) {
         List<String> h1Texts = new ArrayList<>();
 
@@ -82,6 +117,13 @@ public class WebScraper {
         return h1Texts;
     }
 
+
+    /**
+     * Extracts the subfield names (h2 tags) from the document, filtering out forbidden words.
+     *
+     * @param doc the HTML document to extract subfield names from
+     * @return a list of extracted subfield names
+     */
     public static List<String> getSubFieldNames(Document doc) {
         List<String> h2Texts = new ArrayList<>();
 
@@ -97,6 +139,13 @@ public class WebScraper {
         return h2Texts;
     }
 
+
+    /**
+     * Extracts the best points from the "h4" elements in the document.
+     *
+     * @param doc the HTML document to extract points from
+     * @return a list of best points represented as integers
+     */
     public static List<Integer> getBestPointsFromTableAmount(Document doc) {
         List<Integer> bestPointsFromTableAmount = new ArrayList<>();
 
@@ -114,6 +163,13 @@ public class WebScraper {
         return bestPointsFromTableAmount;
     }
 
+
+    /**
+     * Extracts all tables from the document and returns their data as a nested list structure.
+     *
+     * @param doc the HTML document to extract tables from
+     * @return a list of tables, where each table is represented by a list of rows and columns
+     */
     public static List<List<List<String>>> extractTables(Document doc) {
         List<List<List<String>>> tablesData = new ArrayList<>();
 
@@ -151,6 +207,14 @@ public class WebScraper {
         return tablesData;
     }
 
+
+    /**
+     * Determines the index of a specific table within the document.
+     *
+     * @param doc the HTML document
+     * @param target the target table element
+     * @return the index of the table in the document
+     */
     public static int getTableIndex(Document doc, Element target) {
         int count = 0;
         for (Element elem : doc.getAllElements()) {
@@ -164,6 +228,13 @@ public class WebScraper {
         return count;
     }
 
+
+    /**
+     * Extracts university program data from the document and returns a list of UniversityProgram objects.
+     *
+     * @param doc the HTML document containing university program data
+     * @return a list of UniversityProgram objects
+     */
     public static List<UniversityProgram> getUniversityProgramData(Document doc) {
         List<UniversityProgram> programData = new ArrayList<>();
 
@@ -245,6 +316,13 @@ public class WebScraper {
         return programData;
     }
 
+
+    /**
+     * Extracts subject points data from the document, including the best of points from tables.
+     *
+     * @param doc the HTML document containing subject points data
+     * @return a list of SubjectPoints objects
+     */
     public static List<SubjectPoints> getSubjectPointsData(Document doc) {
         List<SubjectPoints> subjectPointsData = new ArrayList<>();
 
@@ -280,6 +358,15 @@ public class WebScraper {
         return subjectPointsData;
     }
 
+
+    /**
+     * Parses a table to extract subject points and grades.
+     *
+     * @param table the table element to parse
+     * @param index the index of the table
+     * @param bestof the "best of" number for points
+     * @return a SubjectPoints object containing the parsed data
+     */
     private static SubjectPoints parseTable(Element table, int index, int bestof) {
         SubjectPoints subjectPoints = new SubjectPoints();
         subjectPoints.setTableIndex(index);

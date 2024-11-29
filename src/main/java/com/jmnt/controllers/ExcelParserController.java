@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller for handling requests related to university data parsed from Excel files.
+ */
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/excel")
@@ -22,6 +25,12 @@ public class ExcelParserController {
     @Autowired
     private UniversityService universityService;
 
+    /**
+     * Retrieves a list of universities for the year 2024.
+     *
+     * @return a {@link ResponseEntity} containing a list of {@link University} objects
+     *         or an HTTP status of INTERNAL_SERVER_ERROR if an error occurs.
+     */
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/universities")
     public ResponseEntity<List<University>> getUniversities() {
@@ -34,6 +43,13 @@ public class ExcelParserController {
         }
     }
 
+    /**
+     * Retrieves details of a university by its name for the year 2024.
+     *
+     * @param name the name of the university.
+     * @return a {@link ResponseEntity} containing the {@link University} object
+     *         or an HTTP status of NOT_FOUND if the university is not found.
+     */
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/university/{name}")
     public ResponseEntity<University> getUniversity(@PathVariable String name) {
@@ -51,6 +67,15 @@ public class ExcelParserController {
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "University not found");
     }
+
+    /**
+     * Retrieves university data for a specific year by its name.
+     *
+     * @param name the name of the university.
+     * @param year the year of the data to retrieve.
+     * @return a {@link ResponseEntity} containing the {@link University} object
+     *         or an HTTP status of NOT_FOUND if the university is not found for the given year.
+     */
     public ResponseEntity<University> getUniversityDataForYear(@PathVariable String name,int year) {
         try {
             ParsedUniversityContext data = ParsedUniversityContext.getInstance();
@@ -67,6 +92,17 @@ public class ExcelParserController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "University not found");
     }
 
+
+    /**
+     * Retrieves a mapping of admission methods for a specific university, field of study,
+     * and admission method across years from 2020 to 2024.
+     *
+     * @param name the name of the university.
+     * @param field the field of study.
+     * @param admissionMethod the admission method.
+     * @return a {@link ResponseEntity} containing a map where the key is the year
+     *         and the value is the corresponding {@link University.AdmissionMethod}.
+     */
     @CrossOrigin(origins = "http://localhost:5173/home")
     @GetMapping("/graph/{name}/{field}/{admissionMethod}")
     public ResponseEntity<Map<Integer,University.AdmissionMethod>> getGraph(@PathVariable String name

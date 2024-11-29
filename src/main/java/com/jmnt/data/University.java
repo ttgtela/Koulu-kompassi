@@ -3,6 +3,9 @@ package com.jmnt.data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a university with its name and associated fields of study.
+ */
 public class University {
     private String name;
 
@@ -16,6 +19,11 @@ public class University {
 
     private List<FieldOfStudy> fields;
 
+    /**
+     * Constructs a new University with the specified name.
+     *
+     * @param name the name of the university.
+     */
     public University(String name) {
         this.name = name;
         this.fields = new ArrayList<>();

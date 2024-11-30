@@ -14,7 +14,7 @@ export const CombinedData = async (topField) => {
                 console.log("data: " + university.topField);
                 console.log("combinedData: " + topField);
                 university.universityPoints.forEach(function(pointEntry) {
-                    let fieldsPoints = pointEntry.fieldsPoints;
+                    let fieldsPoints = pointEntry;
                     combinedData.push(fieldsPoints);
                 });
                 throw new Error('This is a filthy hack, I am sorry :( ');

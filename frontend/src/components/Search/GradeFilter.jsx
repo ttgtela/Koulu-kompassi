@@ -129,17 +129,37 @@ const GradeFilter = ({ setTotalPointsForUniversity, setTotalPointsForRealUnivers
             }
         }
 
+        function getTopXNumbers(numbers, x) {
+            const sortedNumbers = [...numbers].sort((a, b) => b - a);
+            const topXNumbers = sortedNumbers.slice(0, x);
+            const sum = topXNumbers.reduce((accumulator, current) => accumulator + current, 0);
+            const parseSum = parseFloat(sum);
+            return parseSum;
+        }
+
         let totalPoints = 0;
         let bestMathScore = 0;
         let bestLanguageScore = 0;
         let bestOrPoints = 0;
+        let bestNumbersByBestOf = 0;
+
+        let how_many_most = 0;
+
+        let bestOfPoints = [];
+
 
         let pointSystem = { ...combinedData };
         const grades = { ...selectedGrades };
 
         for (const [key, selected_grade] of Object.entries(grades)) {
             for(let i = 0; i < Object.keys(pointSystem).length; i++) {
-                for (const [subject, data] of Object.entries(pointSystem[i])) {
+                const fieldsPoints = pointSystem[i].fieldsPoints;
+                const how_many = pointSystem[i].bestOf;
+                if(how_many > how_many_most) {
+                    how_many_most = how_many;
+                }
+                let subjectsCount = Object.keys(fieldsPoints).length
+                for (const [subject, data] of Object.entries(fieldsPoints)) {
                     if(subject.includes(" tai ")) {
                         const or_subjects = subject.split(" tai ");
 
@@ -155,13 +175,23 @@ const GradeFilter = ({ setTotalPointsForUniversity, setTotalPointsForRealUnivers
                             });
                         }
                     }
-                    getSubjectPoints(key, subject, data, selected_grade);
+                    let got_points = getSubjectPoints(key, subject, data, selected_grade);
+                    if(how_many >= 2 && !isNaN(got_points) && subjectsCount > how_many) {
+                        bestOfPoints.push(got_points);
+                    }
                 }
             }
         }
+        totalPoints = totalPoints - getTopXNumbers(bestOfPoints, bestOfPoints.length)
+        let best_numbers = getTopXNumbers(bestOfPoints, how_many_most);
+        if(!isNaN(best_numbers)) {
+            bestNumbersByBestOf += best_numbers;
+        }
+
         totalPoints += bestMathScore;
         totalPoints += bestLanguageScore;
         totalPoints += bestOrPoints;
+        totalPoints += bestNumbersByBestOf;
 
         if(totalPoints < 0) totalPoints = 0;
 

@@ -8,7 +8,7 @@ import HsChart from "../../data/HsDataGraph.jsx";
 import HsStudentInfo from "../../data/HsStudentInfo.jsx";
 import {HsExam} from "../../data/HsExam.jsx";
 
-const SidePanel=({school, closePanel, type, isOpen, uniPoints}) =>{
+const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, selectedRealUniField, combinedSpecific}) =>{
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -54,40 +54,70 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints}) =>{
 
     const filterFields = (fields) => {
         const filteredFields = [];
+        const filteredFields2 = new Set();
         const fieldsToDelete = new Set();
 
-        if (uniPoints===0 || type==="university"){
-            return fields;
+        if (uniPoints === 0 || type === "university" || school.includes("yliopisto")) {
+            fields.forEach((field) => {
+                let fieldName = field.name;
+                combinedSpecific.forEach((data) => {
+                    if (fieldName === data.fieldName) {
+                        if (realUniPoints !== 0) {
+                            for (const [key, value] of Object.entries(data)) {
+                                if (key.includes("admissionMethods")) {
+                                    value.forEach((method) => {
+                                        const methodType = Object.values(method)[0];
+                                        const methodPoints = parseFloat(Object.values(method)[1]);
+
+                                        if (methodType === "Todistusvalinta" && methodPoints < realUniPoints) {
+                                            filteredFields2.add(field.name);
+                                        }
+                                    });
+                                }
+                            }
+                        } else {
+                            filteredFields2.add(field.name);
+                        }
+                    }
+                });
+            });
+        }
+        if(type !== "university" && !school.includes("yliopisto")) {
+            fields.forEach((field) => {
+                const methods = field.admissionMethods.map((method) => method.name);
+                field.admissionMethods.forEach((method) => {
+                    if (
+                        (method.name === "Todistusvalinta (YO)" ||
+                            (method.name === "Todistusvalinta" &&
+                                methods.includes("Todistusvalinta (AMM)"))) &&
+                        method.requiredPoints > uniPoints &&
+                        uniPoints !== 0
+                    ) {
+                        fieldsToDelete.add(field.name);
+                    }
+
+                    if (
+                        (!methods.includes("Todistusvalinta") &&
+                            !methods.includes("Todistusvalinta (YO)") &&
+                            uniPoints !== 0) ||
+                        (methods.length === 0 && uniPoints !== 0)
+                    ) {
+                        fieldsToDelete.add(field.name);
+                    }
+                });
+            });
         }
 
-
         fields.forEach((field) => {
-            const methods = field.admissionMethods.map((method) => method.name);
-            field.admissionMethods.forEach((method) => {
-                if (
-                    (method.name === "Todistusvalinta (YO)" ||
-                        (method.name === "Todistusvalinta" &&
-                            methods.includes("Todistusvalinta (AMM)"))) &&
-                    method.requiredPoints > uniPoints &&
-                    uniPoints !== 0
-                ) {
-                    fieldsToDelete.add(field.name);
+            if(filteredFields2.size === 0) {
+                if (!fieldsToDelete.has(field.name)) {
+                    filteredFields.push(field);
                 }
-
-                if (
-                    (!methods.includes("Todistusvalinta") &&
-                        !methods.includes("Todistusvalinta (YO)") &&
-                        uniPoints !== 0) ||
-                    (methods.length === 0 && uniPoints !== 0)
-                ) {
-                    fieldsToDelete.add(field.name);
+            }
+            else {
+                if (filteredFields2.has(field.name)) {
+                    filteredFields.push(field);
                 }
-            });
-        });
-
-        fields.forEach((field) => {
-            if (!fieldsToDelete.has(field.name)) {
-                filteredFields.push(field);
             }
         });
 

@@ -17,6 +17,7 @@ import SearchBar from "../SearchBar/SearchBar.jsx";
 import {FieldData} from "../../data/FieldData.jsx";
 import MapMarker from "./MapMarker.jsx";
 import { subjects } from "../../data/subjectList.js";
+import {RawCombinedData} from "../../data/RawCombinedData.jsx";
 
 const saveFavourites = (newFavourite, type) => {
     let favourites = Cookies.get(type + 'favourites');
@@ -75,6 +76,7 @@ const MapComponent = ({type}) => {
     const [selectedFieldOfStudy, setSelectedFieldOfStudy] = React.useState('');
     const [fields, setFields] = React.useState([]);
     const [combinedData, setCombinedData] = React.useState("");
+    const [combinedSpecificData, setCombinedSpecificData] = React.useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -126,6 +128,20 @@ const MapComponent = ({type}) => {
         };
         fetchFieldData();
     }, []);
+
+    const fetchRawCombined = async (field) => {
+        try {
+            console.log("selected field: " + field)
+            const data = await RawCombinedData(field);
+            if (data) {
+                console.log("moi!!! " + data);
+                console.log(data)
+                setCombinedSpecificData(data);
+            }
+        } catch (error) {
+            console.error("Error fetching combined data:", error);
+        }
+    };
 
     useEffect(() => {
         if (selectedField) {
@@ -211,6 +227,7 @@ const MapComponent = ({type}) => {
         setSelectedFieldOfStudy(e.target.value);
         fetchCombined(e.target.value);
         setSelectedField(e.target.value);
+        fetchRawCombined(e.target.value);
     };
 
     useEffect(() => {
@@ -358,7 +375,11 @@ const MapComponent = ({type}) => {
                     closePanel={closePanel}
                     type={type}
                     isOpen={isPanelOpen}
-                    uniPoints={totalPointsUni}/>
+                    uniPoints={totalPointsUni}
+                    realUniPoints={totalPointsRealUni}
+                    selectedRealUniField={selectedField}
+                    combinedSpecific={combinedSpecificData}
+                />
             )}
         </>
     );

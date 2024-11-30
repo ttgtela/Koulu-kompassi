@@ -2,11 +2,7 @@ package com.jmnt.controllers;
 
 import com.jmnt.data.*;
 import com.jmnt.services.UniversityService;
-import com.jmnt.tools.WebScraper;
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.ss.formula.functions.T;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +10,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
+
+/**
+ * REST controller that provides endpoints to fetch university requirements and study options.
+ * This controller integrates with the UniversityService to retrieve and process data.
+ */
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 public class UniversityRequirementsController {
@@ -51,6 +50,13 @@ public class UniversityRequirementsController {
     private static final boolean CACHE_ENABLED = false;
 
 
+
+    /**
+     * Fetches university requirements data from the service layer.
+     *
+     * @return A ResponseEntity containing a list of UniversityTopField objects
+     *         or an error response in case of failure.
+     */
     @GetMapping("/api/points")
     public ResponseEntity<List<UniversityTopField>> getRequirementsData() {
         try {
@@ -62,6 +68,13 @@ public class UniversityRequirementsController {
         }
     }
 
+
+    /**
+     * Fetches data about where students can study specific fields.
+     *
+     * @return A ResponseEntity containing a list of WhereStudy objects
+     *         or an error response in case of failure.
+     */
     @GetMapping("/api/wherestudy")
     public ResponseEntity<List<WhereStudy>> getWhereStudyData() {
         try {
@@ -73,6 +86,13 @@ public class UniversityRequirementsController {
         }
     }
 
+
+    /**
+     * Fetches data about specific study programs for given fields.
+     *
+     * @return A ResponseEntity containing a list of WhereStudy objects
+     *         or an error response in case of failure.
+     */
     @GetMapping("/api/wherestudyspecific")
     public ResponseEntity<List<WhereStudy>> getWhereStudySpecificData() {
         try {

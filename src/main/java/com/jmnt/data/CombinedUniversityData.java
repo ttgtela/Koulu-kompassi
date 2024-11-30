@@ -1,7 +1,6 @@
 package com.jmnt.data;
 
 import java.util.List;
-import com.jmnt.data.University;
 
 
 /**
@@ -32,10 +31,22 @@ public class CombinedUniversityData {
 
     private String topField;
 
+
+    /**
+     * Retrieves the name of the field from which points are derived.
+     *
+     * @return the points field name.
+     */
     public String getPointsFieldName() {
         return pointsFieldName;
     }
 
+
+    /**
+     * Sets the name of the field from which points are derived.
+     *
+     * @param pointsFieldName the points field name.
+     */
     public void setPointsFieldName(String pointsFieldName) {
         this.pointsFieldName = pointsFieldName;
     }

@@ -3,7 +3,6 @@ package com.jmnt.controllers;
 import com.jmnt.data.University;
 import com.jmnt.data.ParsedUniversityContext;
 import com.jmnt.services.UniversityService;
-import com.jmnt.tools.UniTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

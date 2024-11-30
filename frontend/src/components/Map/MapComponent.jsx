@@ -70,6 +70,7 @@ const MapComponent = ({type}) => {
     const [fieldData, setFieldData] = React.useState([]);
     const [filteredUniversities, setFilteredUniversities] = React.useState([]);
     const [totalPointsUni, setTotalPointsUni] = React.useState(0);
+    const [totalPointsRealUni, setTotalPointsRealUni] = React.useState(0);
     const [isPopupOpen, setIsPopupOpen] = React.useState(false);
     const [selectedFieldOfStudy, setSelectedFieldOfStudy] = React.useState('');
     const [fields, setFields] = React.useState([]);
@@ -142,6 +143,7 @@ const MapComponent = ({type}) => {
     const fetchCombined = async (field) => {
         try {
             const data = await CombinedData(field);
+            console.log(field)
             console.log(data);
             if (data) {
                 setCombinedData(data);
@@ -290,6 +292,8 @@ const MapComponent = ({type}) => {
                                     </button>
                                     <GradeFilter
                                         setTotalPointsForUniversity={setTotalPointsUni}
+                                        setTotalPointsForRealUniversity={setTotalPointsRealUni}
+                                        combinedData={combinedData}
                                         togglePopup={togglePopupOpen}
                                         selectedGrades={selectedGrades}
                                         setSelectedGrades={setSelectedGrades}
@@ -298,12 +302,20 @@ const MapComponent = ({type}) => {
                                 </div>
                             )}
 
+                            {totalPointsRealUni !== 0 ? (
+                                    <p>Total points for University : {totalPointsRealUni}</p>
+                                ) :
+                                (
+                                    <div></div>
+                                )}
+
                             {totalPointsUni !== 0 ? (
                                     <p>Total points for UAS : {totalPointsUni}</p>
                                 ) :
                                 (
                                     <div></div>
                                 )}
+
                         </div>
                     ) : (<div></div>)}
 

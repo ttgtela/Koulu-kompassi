@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { subjects } from "../../data/subjectList.js";
 
-const GradeFilter = ({ setTotalPointsForUniversity, togglePopup, selectedGrades, setSelectedGrades }) => {
+const GradeFilter = ({ setTotalPointsForUniversity, setTotalPointsForRealUniversity, combinedData, togglePopup, selectedGrades, setSelectedGrades}) => {
 
     const gradeOptions = [
         { value: '', label: '-' },
@@ -102,6 +102,72 @@ const GradeFilter = ({ setTotalPointsForUniversity, togglePopup, selectedGrades,
         setTotalPointsForUniversity(totalPoints);
     };
 
+    const calculateRealUniPoints = () => {
+
+        const getSubjectPoints = (key, subject, data, selected_grade) => {
+            if(key.toLowerCase() === subject) {
+                for (const [grade, points] of Object.entries(data)) {
+                    if(grade === selected_grade) {
+                        let added_points = parseFloat(points);
+                        if(subject.includes("matematiikka")) {
+                            if(added_points > bestMathScore) {
+                                bestMathScore = added_points;
+                            }
+                            continue;
+                        }
+                        if(subject.includes("kieli")) {
+                            if(added_points > bestLanguageScore) {
+                                bestLanguageScore = added_points;
+                            }
+                            continue;
+                        }
+                        totalPoints += added_points || 0;
+                        console.log(`Points for ${subject} with grade ${grade}:`, points);
+                        return added_points || 0;
+                    }
+                }
+            }
+        }
+
+        let totalPoints = 0;
+        let bestMathScore = 0;
+        let bestLanguageScore = 0;
+        let bestOrPoints = 0;
+
+        let pointSystem = { ...combinedData };
+        const grades = { ...selectedGrades };
+
+        for (const [key, selected_grade] of Object.entries(grades)) {
+            for(let i = 0; i < Object.keys(pointSystem).length; i++) {
+                for (const [subject, data] of Object.entries(pointSystem[i])) {
+                    if(subject.includes(" tai ")) {
+                        const or_subjects = subject.split(" tai ");
+
+                        if(or_subjects.length > 1) {
+                            or_subjects.forEach((new_subject) => {
+                                let or_points = parseFloat(getSubjectPoints(key, new_subject, data, selected_grade));
+                                if(or_points) {
+                                    totalPoints = totalPoints - or_points;
+                                }
+                                if(or_points > bestOrPoints) {
+                                    bestOrPoints = or_points;
+                                }
+                            });
+                        }
+                    }
+                    getSubjectPoints(key, subject, data, selected_grade);
+                }
+            }
+        }
+        totalPoints += bestMathScore;
+        totalPoints += bestLanguageScore;
+        totalPoints += bestOrPoints;
+
+        if(totalPoints < 0) totalPoints = 0;
+
+        setTotalPointsForRealUniversity(totalPoints);
+    };
+
 
     const handleGradeChange = (subject, value) => {
         setSelectedGrades(prevGrades => ({
@@ -113,6 +179,7 @@ const GradeFilter = ({ setTotalPointsForUniversity, togglePopup, selectedGrades,
     const handleSubmit = (e) => {
         e.preventDefault();
         calculateTotalPoints();
+        calculateRealUniPoints();
         const submissionData = {
             grades: selectedGrades,
         };

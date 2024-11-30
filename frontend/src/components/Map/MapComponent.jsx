@@ -16,8 +16,8 @@ import Cookies from 'js-cookie';
 import SearchBar from "../SearchBar/SearchBar.jsx";
 import {FieldData} from "../../data/FieldData.jsx";
 import MapMarker from "./MapMarker.jsx";
-import { subjects } from "../../data/subjectList.js";
-import {RawCombinedData} from "../../data/RawCombinedData.jsx";
+import { subjects } from "../../data/SubjectList.jsx";
+import { calculateRealUniPoints } from "../Search/CalculateUniPoints.jsx";
 
 const saveFavourites = (newFavourite, type) => {
     let favourites = Cookies.get(type + 'favourites');
@@ -67,7 +67,6 @@ const MapComponent = ({type}) => {
     const [selectedTypes, setSelectedTypes] = React.useState([]);
     const [availableTypes, setAvailableTypes] = React.useState([]);
     const [favourites, setFavourites] = React.useState([]);
-    const [selectedField, setSelectedField] = React.useState('');
     const [fieldData, setFieldData] = React.useState([]);
     const [filteredUniversities, setFilteredUniversities] = React.useState([]);
     const [totalPointsUni, setTotalPointsUni] = React.useState(0);
@@ -76,7 +75,6 @@ const MapComponent = ({type}) => {
     const [selectedFieldOfStudy, setSelectedFieldOfStudy] = React.useState('');
     const [fields, setFields] = React.useState([]);
     const [combinedData, setCombinedData] = React.useState("");
-    const [combinedSpecificData, setCombinedSpecificData] = React.useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -129,23 +127,9 @@ const MapComponent = ({type}) => {
         fetchFieldData();
     }, []);
 
-    const fetchRawCombined = async (field) => {
-        try {
-            console.log("selected field: " + field)
-            const data = await RawCombinedData(field);
-            if (data) {
-                console.log("moi!!! " + data);
-                console.log(data)
-                setCombinedSpecificData(data);
-            }
-        } catch (error) {
-            console.error("Error fetching combined data:", error);
-        }
-    };
-
     useEffect(() => {
-        if (selectedField) {
-            const field = fieldData.find(f => f.field === selectedField);
+        if (selectedFieldOfStudy) {
+            const field = fieldData.find(f => f.field === selectedFieldOfStudy);
             if (field) {
                 setFilteredUniversities(field.universities);
             } else {
@@ -154,7 +138,7 @@ const MapComponent = ({type}) => {
         } else {
             setFilteredUniversities([]);
         }
-    }, [selectedField, fieldData]);
+    }, [selectedFieldOfStudy, fieldData]);
 
     const fetchCombined = async (field) => {
         try {
@@ -226,15 +210,19 @@ const MapComponent = ({type}) => {
     const handleFieldChange = (e) => {
         setSelectedFieldOfStudy(e.target.value);
         fetchCombined(e.target.value);
-        setSelectedField(e.target.value);
-        fetchRawCombined(e.target.value);
     };
 
     useEffect(() => {
+        if (selectedFieldOfStudy && combinedData && selectedGrades) {
+            calculateRealUniPoints(setTotalPointsRealUni, combinedData, selectedGrades);
+        }
+    }, [selectedFieldOfStudy, combinedData]);
+
+    useEffect(() => {
         const fetchFields = async () => {
-            const fieldList = await FieldData(); // Call the async function
+            const fieldList = await FieldData();
             if (fieldList) {
-                setFields(fieldList); // Update the state with the fetched fields
+                setFields(fieldList);
             }
         };
         fetchFields();
@@ -320,14 +308,14 @@ const MapComponent = ({type}) => {
                             )}
 
                             {totalPointsRealUni !== 0 ? (
-                                    <p>Total points for University : {totalPointsRealUni}</p>
+                                    <p>Total points for University: {totalPointsRealUni}</p>
                                 ) :
                                 (
                                     <div></div>
                                 )}
 
                             {totalPointsUni !== 0 ? (
-                                    <p>Total points for UAS : {totalPointsUni}</p>
+                                    <p>Total points for University of Applied Sciences: {totalPointsUni}</p>
                                 ) :
                                 (
                                     <div></div>
@@ -375,11 +363,7 @@ const MapComponent = ({type}) => {
                     closePanel={closePanel}
                     type={type}
                     isOpen={isPanelOpen}
-                    uniPoints={totalPointsUni}
-                    realUniPoints={totalPointsRealUni}
-                    selectedRealUniField={selectedField}
-                    combinedSpecific={combinedSpecificData}
-                />
+                    uniPoints={totalPointsUni}/>
             )}
         </>
     );

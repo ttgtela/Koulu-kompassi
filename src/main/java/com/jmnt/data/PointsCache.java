@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 

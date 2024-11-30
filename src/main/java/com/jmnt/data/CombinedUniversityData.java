@@ -1,7 +1,6 @@
 package com.jmnt.data;
 
 import java.util.List;
-import com.jmnt.data.University;
 
 
 /**

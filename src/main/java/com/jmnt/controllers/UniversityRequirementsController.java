@@ -2,11 +2,7 @@ package com.jmnt.controllers;
 
 import com.jmnt.data.*;
 import com.jmnt.services.UniversityService;
-import com.jmnt.tools.WebScraper;
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.ss.formula.functions.T;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +10,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 

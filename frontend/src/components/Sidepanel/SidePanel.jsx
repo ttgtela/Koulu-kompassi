@@ -19,7 +19,7 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
     const [selectedMethod, setSelectedMethod] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [chartData, setChartData] = useState([]);
-    const [selectedYear, setSelectedYear] = useState(2024);
+    const [selectedYear, setSelectedYear] = useState(2023);
 
 
     const toggleFieldData = (field) => {

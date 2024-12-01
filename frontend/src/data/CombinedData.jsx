@@ -11,8 +11,6 @@ export const CombinedData = async (topField) => {
         try {
             data.forEach(function(university) {
                 if(compareTwoStrings(university.topField, topField) < 0.5) return;
-                console.log("data: " + university.topField);
-                console.log("combinedData: " + topField);
                 university.universityPoints.forEach(function(pointEntry) {
                     let fieldsPoints = pointEntry;
                     combinedData.push(fieldsPoints);

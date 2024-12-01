@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import getData from '../../data/NameAndCoord.jsx';
-import RatingFilter from '../Search/RatingFilter.jsx';
 import {CombinedData} from "../../data/CombinedData.jsx";
 import GradeFilter from '../Search/GradeFilter.jsx';
 import TypeFilter from "../Search/TypeFilter.jsx";
@@ -131,11 +130,8 @@ const MapComponent = ({type}) => {
 
     const fetchRawCombined = async (field) => {
         try {
-            console.log("selected field: " + field)
             const data = await RawCombinedData(field);
             if (data) {
-                console.log("moi!!! " + data);
-                console.log(data)
                 setCombinedSpecificData(data);
             }
         } catch (error) {
@@ -159,8 +155,6 @@ const MapComponent = ({type}) => {
     const fetchCombined = async (field) => {
         try {
             const data = await CombinedData(field);
-            console.log(field)
-            console.log(data);
             if (data) {
                 setCombinedData(data);
             }
@@ -388,6 +382,5 @@ const MapComponent = ({type}) => {
             )}
         </>
     );
-
 };
 export default MapComponent;

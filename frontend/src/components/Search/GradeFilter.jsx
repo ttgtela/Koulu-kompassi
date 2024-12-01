@@ -118,7 +118,6 @@ const GradeFilter = ({ setTotalPointsForUniversity, setTotalPointsForRealUnivers
         const submissionData = {
             grades: selectedGrades,
         };
-        console.log('Submission Data:', submissionData);
 
         togglePopup();
     };

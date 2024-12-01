@@ -56,8 +56,12 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
         const filteredFields = [];
         const filteredFields2 = new Set();
         const fieldsToDelete = new Set();
+        console.log("moi!")
+        console.log("selectedRealUniField " + selectedRealUniField)
+        console.log("selectedField " + selectedField)
 
-        if(selectedRealUniField === null) {
+        if(selectedRealUniField === undefined && selectedField === null) {
+            console.log("Hei!")
             return fields;
         }
 
@@ -295,7 +299,7 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
                         {selectedField === null ?
                             (
                                 <div>
-                                    <p><strong>University Name:</strong>{data.name}</p>
+                                    <p><strong>University Name: </strong>{data.name}</p>
                                     <h3>Fields of Study:</h3>
                                     <input
                                         type="text"

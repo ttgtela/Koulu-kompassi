@@ -73,7 +73,7 @@ const MapComponent = ({type}) => {
     const [totalPointsUni, setTotalPointsUni] = React.useState(0);
     const [totalPointsRealUni, setTotalPointsRealUni] = React.useState(0);
     const [isPopupOpen, setIsPopupOpen] = React.useState(false);
-    const [selectedFieldOfStudy, setSelectedFieldOfStudy] = React.useState('');
+    const [selectedFieldOfStudy, setSelectedFieldOfStudy] = React.useState();
     const [fields, setFields] = React.useState([]);
     const [combinedData, setCombinedData] = React.useState("");
     const [combinedSpecificData, setCombinedSpecificData] = React.useState("");

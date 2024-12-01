@@ -9,13 +9,16 @@ export const CombinedData = async (topField) => {
         const data = await response.json();
         let combinedData = [];
         try {
-            data.forEach(function(university) {
-                if(compareTwoStrings(university.topField, topField) < 0.5) return;
+            if(topField === "Lääketieteelliset alat") {
+                topField = "Biolääketieteet";
+            }
+            data.forEach(function(university, index) {
+                if(compareTwoStrings(university.topField, topField) < 0.6) return;
                 university.universityPoints.forEach(function(pointEntry) {
                     let fieldsPoints = pointEntry;
                     combinedData.push(fieldsPoints);
                 });
-                throw new Error('This is a filthy hack, I am sorry :( ');
+                throw new Error('');
             });
         }
         catch {

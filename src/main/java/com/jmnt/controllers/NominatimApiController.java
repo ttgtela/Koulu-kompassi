@@ -108,26 +108,4 @@ public class NominatimApiController {
     public Map<String, Map<String, CampusInfo>> getHsCoordinates() {
         return searchAllCoordinates(UniTools.fetchHsNames());
     }
-
-
-    /**
-     * API endpoint to retrieve a list of university names.
-     *
-     * @return a list of university names.
-     */
-    @GetMapping("/names")
-    public List<String> getNames() {
-        return UniTools.getUniversityNames();
-    }
-
-
-    /**
-     * API endpoint to retrieve a list of high school names.
-     *
-     * @return a list of high school names.
-     */
-    @GetMapping("/hsnames")
-    public List<String> getHsNames() {
-        return UniTools.fetchHsNames();
-    }
 }

@@ -12,7 +12,6 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedSchool, setSelectedSchool] = useState(null);
     const [selectedField,setSelectedField]=useState(null);
     const [isFieldDataOpen,setIsFieldDataOpen]=useState(false);
     const [isGraphOpen, setIsGraphOpen] = useState(false);
@@ -56,12 +55,8 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
         const filteredFields = [];
         const filteredFields2 = new Set();
         const fieldsToDelete = new Set();
-        console.log("moi!")
-        console.log("selectedRealUniField " + selectedRealUniField)
-        console.log("selectedField " + selectedField)
 
         if(selectedRealUniField === undefined && selectedField === null) {
-            console.log("Hei!")
             return fields;
         }
 
@@ -202,7 +197,6 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
 
     const handleYearChange = (event) => {
         const newYear = Number(event.target.value);
-        console.log("Selected year:", newYear);
         setSelectedYear(newYear);
     };
 
@@ -299,7 +293,6 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
                         {selectedField === null ?
                             (
                                 <div>
-                                    <p><strong>University Name: </strong>{data.name}</p>
                                     <h3>Fields of Study:</h3>
                                     <input
                                         type="text"

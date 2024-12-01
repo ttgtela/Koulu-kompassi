@@ -318,7 +318,7 @@ const MapComponent = ({type}) => {
                                 </div>
                             )}
 
-                            {totalPointsRealUni !== 0 && selectedFieldOfStudy ? (
+                            {Math.round(totalPointsRealUni) !== 0 && selectedFieldOfStudy ? (
                                     <p>Total points for University: {totalPointsRealUni}</p>
                                 ) :
                                 (

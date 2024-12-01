@@ -56,6 +56,10 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
         const filteredFields = [];
         const filteredFields2 = new Set();
         const fieldsToDelete = new Set();
+        
+        if(selectedField === null) {
+            return fields;
+        }
 
         if (uniPoints === 0 || type === "university" || school.includes("yliopisto")) {
             fields.forEach((field) => {
@@ -82,7 +86,7 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
                 });
             });
         }
-        if(type !== "university" && !school.includes("yliopisto")) {
+        if(type !== "university" && !school.includes("yliopisto" )) {
             fields.forEach((field) => {
                 const methods = field.admissionMethods.map((method) => method.name);
                 field.admissionMethods.forEach((method) => {

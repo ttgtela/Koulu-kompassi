@@ -1,5 +1,4 @@
 import React from 'react';
-import {Button} from "react-bootstrap";
 import MapComponent from '../components/Map/MapComponent';
 import { useLocation } from 'react-router-dom';
 import './Home.css';

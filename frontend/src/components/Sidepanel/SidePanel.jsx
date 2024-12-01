@@ -56,8 +56,8 @@ const SidePanel=({school, closePanel, type, isOpen, uniPoints, realUniPoints, se
         const filteredFields = [];
         const filteredFields2 = new Set();
         const fieldsToDelete = new Set();
-        
-        if(selectedField === null) {
+
+        if(selectedRealUniField === null) {
             return fields;
         }
 

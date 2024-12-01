@@ -92,5 +92,5 @@ export const calculateRealUniPoints = (setTotalPointsForRealUniversity, combined
 
         if(totalPoints < 0) totalPoints = 0;
 
-        setTotalPointsForRealUniversity(totalPoints);
+        setTotalPointsForRealUniversity(totalPoints.toFixed(1));
     };

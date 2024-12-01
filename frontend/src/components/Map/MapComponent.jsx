@@ -325,7 +325,7 @@ const MapComponent = ({type}) => {
                                     <div></div>
                                 )}
 
-                            {totalPointsUni !== 0 && selectedFieldOfStudy ? (
+                            {totalPointsUni !== 0 ? (
                                     <p>Total points for University of Applied Sciences: {totalPointsUni}</p>
                                 ) :
                                 (

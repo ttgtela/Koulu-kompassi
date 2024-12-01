@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = {
 		"com.jmnt.controllers",
-		"com.jmnt.configuration",
 		"com.jmnt.data",
 		"com.jmnt.excelparser",
 		"com.jmnt.services",

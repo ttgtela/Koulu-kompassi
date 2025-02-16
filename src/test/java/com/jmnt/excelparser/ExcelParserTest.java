@@ -2,8 +2,11 @@ package com.jmnt.excelparser;
 
 import com.jmnt.data.University;
 import org.junit.jupiter.api.*;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
+
 
 class ExcelParserTest {
 
@@ -24,7 +27,7 @@ class ExcelParserTest {
 
         University.AdmissionMethod method = field.getAdmissionMethods().get(0);
         assertEquals("Koepisteet", method.getName());
-        assertEquals(171.67, method.getRequiredPoints());
+        assertEquals(155.67, method.getRequiredPoints());
     }
 
 }

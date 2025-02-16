@@ -4,6 +4,8 @@ import com.jmnt.data.ParsedUniversityContext;
 import com.jmnt.data.University;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
